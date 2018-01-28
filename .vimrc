@@ -44,7 +44,7 @@ Plugin 'godlygeek/tabular'
 Plugin 'moll/vim-node'
 Plugin 'junegunn/seoul256.vim'
 Plugin 'leafgarland/typescript-vim'
-Plugin 'Quramy/tsuquyomi'
+"Plugin 'Quramy/tsuquyomi'"
 Plugin 'Quramy/vim-js-pretty-template'
 Plugin 'jiangmiao/auto-pairs'
 Plugin 'Yggdroot/indentLine'
@@ -81,7 +81,7 @@ set expandtab
 map <C-n> :NERDTreeToggle<CR>
 let NERDTreeShowHidden=1
 let g:airline_powerline_fonts=1
-let g:airline_theme='bubblegum'
+let g:airline_theme='molokai'
 
 map <C-d> :TernDef<CR>
 map <C-r> :TernRefs<CR>
@@ -101,4 +101,16 @@ autocmd FileType typescript syn clear foldBraces
 let test#strategy = "asyncrun"
 
 au BufNewFile,BufRead *.py set tabstop=4 softtabstop=4 shiftwidth=4 textwidth=79 expandtab autoindent fileformat=unix
+
+" if jedi#init_python()
+"   function! s:jedi_auto_force_py_version() abort
+"       let major_version = pyenv#python#get_internal_major_version()
+"       call jedi#force_py_version(major_version)
+"   endfunction
+"   augroup vim-pyenv-custom-augroup
+"       autocmd! *
+"       autocmd User vim-pyenv-activate-post   call s:jedi_auto_force_py_version()
+"       autocmd User vim-pyenv-deactivate-post call s:jedi_auto_force_py_version()
+"   augroup END
+" endif
 

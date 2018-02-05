@@ -4,7 +4,6 @@ filetype off
 set t_Co=256
 set lazyredraw
 set ttyfast
-set hlsearch
 
 set tags=./tags,tags;$HOME
 set rtp+=~/.vim/bundle/Vundle.vim
@@ -31,6 +30,7 @@ Plugin 'scrooloose/nerdtree'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 Plugin 'Xuyuanp/nerdtree-git-plugin'
+"Plugin 'Valloric/YouCompleteMe'"
 Plugin 'easymotion/vim-easymotion'
 Plugin 'tpope/vim-repeat'
 Plugin 'tpope/vim-speeddating'
@@ -54,13 +54,19 @@ Plugin 'vim-syntastic/syntastic'
 Plugin 'powerman/vim-plugin-ruscmd'
 Plugin 'vim-scripts/indentpython.vim'
 Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'davidhalter/jedi-vim'
-Plugin 'lambdalisue/vim-pyenv'
+"Plugin 'davidhalter/jedi-vim'"
+"Plugin 'lambdalisue/vim-pyenv'"
+Plugin 'python-mode/python-mode'
 call vundle#end()
 
 syntax on
 set background=dark
-colorscheme seoul256
+colorscheme crunchbang
+if has('termguicolors')
+    set termguicolors " 24-bit terminal
+else
+    let g:crunchbang_termcolors=256 " 256 color mode
+endif
 
 set number
 set ruler
@@ -78,10 +84,15 @@ set softtabstop=4
 set shiftwidth=4 
 set expandtab
 
+"set expandtab"
+"set shiftwidth=4"
+"set softtabstop=4"
+"set smartindent"
+
 map <C-n> :NERDTreeToggle<CR>
 let NERDTreeShowHidden=1
 let g:airline_powerline_fonts=1
-let g:airline_theme='molokai'
+let g:airline_theme='bubblegum'
 
 map <C-d> :TernDef<CR>
 map <C-r> :TernRefs<CR>
@@ -101,16 +112,7 @@ autocmd FileType typescript syn clear foldBraces
 let test#strategy = "asyncrun"
 
 au BufNewFile,BufRead *.py set tabstop=4 softtabstop=4 shiftwidth=4 textwidth=79 expandtab autoindent fileformat=unix
-
-" if jedi#init_python()
-"   function! s:jedi_auto_force_py_version() abort
-"       let major_version = pyenv#python#get_internal_major_version()
-"       call jedi#force_py_version(major_version)
-"   endfunction
-"   augroup vim-pyenv-custom-augroup
-"       autocmd! *
-"       autocmd User vim-pyenv-activate-post   call s:jedi_auto_force_py_version()
-"       autocmd User vim-pyenv-deactivate-post call s:jedi_auto_force_py_version()
-"   augroup END
-" endif
-
+"let g:pymode = 1"
+"let g:jedi#force_py_version = 3"
+"set omnifunc=jedi#completions"
+"au BufRead,BufNewFile *.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/"

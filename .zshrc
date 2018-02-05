@@ -1,11 +1,11 @@
-# if you come from bash you might have to change your $PATH.
-export PATH=$HOME/bin:/$HOME/.pyenv/bin:usr/local/bin:$PATH
+# If you come from bash you might have to change your $PATH.
+# export PATH=$HOME/bin:/usr/local/bin:$PATH
 # Path to your oh-my-zsh installation.
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
+export PYENV_ROOT=~/.pyenv
 export ZSH=~/.oh-my-zsh
 export TERM="xterm-256color"
-
+export ANDROID_HOME=~/Library/Android/sdk
+#
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
@@ -54,9 +54,9 @@ plugins=(git git-completion colored-man colorize virtualenv pip python osx zsh-s
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-#
+
 source $ZSH/oh-my-zsh.sh
-#
+
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
@@ -65,7 +65,7 @@ source $ZSH/oh-my-zsh.sh
 # export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION  ]]; then
+# if [[ -n $SSH_CONNECTION ]]; then
 #   export EDITOR='vim'
 # else
 #   export EDITOR='mvim'
@@ -76,7 +76,7 @@ source $ZSH/oh-my-zsh.sh
 
 # ssh
 # export SSH_KEY_PATH="~/.ssh/rsa_id"
-#
+
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
@@ -86,14 +86,18 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 #
 alias vimconfig="vim ~/.vimrc"
-alias zshconfig="vim ~/.zshrc"
-alias tmuxconfig="vim ~/.tmux.conf"
+alias nvimconfig="nvim ~/.config/nvim/init.vim"
+alias zshconfig="nvim ~/.zshrc"
+alias tmuxconfig="nvim ~/.tmux.conf"
 alias prettyjson='python -m json.tool'
+# alias tmux="tmux -2"
 alias tmux="TERM=screen-256color-bce tmux"
 POWERLEVEL9K_CONTEXT_TEMPLATE=%n@%m
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir vcs)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status root_indicator background_jobs aws pyenv time)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status root_indicator background_jobs aws nodeenv pyenv time)
 POWERLEVEL9K_SHORTEN_DIR_LENGTH=2
+# POWERLEVEL9K_SHORTEN_STRATEGY="truncate_with_folder_marker"
 POWERLEVEL9K_SHORTEN_DELIMITER=".."
 POWERLEVEL9K_PROMPT_ON_NEWLINE=true
 POWERLEVEL9K_VCS_MODIFIED_BACKGROUND='208'
+

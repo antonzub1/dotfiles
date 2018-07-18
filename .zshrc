@@ -1,10 +1,6 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 # Path to your oh-my-zsh installation.
-export PYENV_ROOT=~/.pyenv
-export ZSH=~/.oh-my-zsh
-export TERM="xterm-256color"
-export ANDROID_HOME=~/Library/Android/sdk
 #
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -85,13 +81,15 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 #
+alias vim="nvim"
 alias vimconfig="vim ~/.vimrc"
 alias nvimconfig="nvim ~/.config/nvim/init.vim"
 alias zshconfig="nvim ~/.zshrc"
 alias tmuxconfig="nvim ~/.tmux.conf"
 alias prettyjson='python -m json.tool'
-# alias tmux="tmux -2"
 alias tmux="TERM=screen-256color-bce tmux"
+alias docker_rmc="docker rm $(docker ps -a | awk 'FNR > 1 {print $1}')"
+alias docker_rmi="docker rmi $(docker images -a | awk 'FNR > 1 {print $3}')"
 POWERLEVEL9K_CONTEXT_TEMPLATE=%n@%m
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir vcs)
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status root_indicator background_jobs aws nodeenv pyenv time)
@@ -101,3 +99,4 @@ POWERLEVEL9K_SHORTEN_DELIMITER=".."
 POWERLEVEL9K_PROMPT_ON_NEWLINE=true
 POWERLEVEL9K_VCS_MODIFIED_BACKGROUND='208'
 
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

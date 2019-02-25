@@ -38,8 +38,8 @@ nnoremap <A-j> <C-w>j
 nnoremap <A-k> <C-w>k
 nnoremap <A-l> <C-w>l
 
-let g:python_host_prog = '/home/antonzub/.pyenv/versions/neovim2/bin/python'
-let g:python3_host_prog = '/home/antonzub/.pyenv/versions/neovim3/bin/python'
+let g:python_host_prog = '/usr/bin/python'
+let g:python3_host_prog = '/usr/bin/python3'
 
 call plug#begin('~/.local/share/vim/plugged')
 Plug 'sheerun/vim-polyglot'
@@ -66,7 +66,7 @@ Plug 'vim-syntastic/syntastic'
 Plug 'powerman/vim-plugin-ruscmd'
 Plug 'vim-scripts/indentpython.vim'
 Plug 'Shougo/deoplete.nvim'
-Plug 'zchee/deoplete-jedi'
+Plug 'deoplete-plugins/deoplete-jedi'
 Plug 'davidhalter/jedi-vim'
 Plug 'majutsushi/tagbar'
 Plug 'Shougo/denite.nvim'
@@ -84,12 +84,12 @@ call plug#end()
 
 syntax on
 set background=dark
-colorscheme crunchbang
-if has('termguicolors')
-    set termguicolors " 24-bit terminal
-else
-    let g:crunchbang_termcolors=256 " 256 color mode
-endif
+colorscheme seoul256
+" if has('termguicolors')
+"     set termguicolors " 24-bit terminal
+" else
+"     let g:crunchbang_termcolors=256 " 256 color mode
+" endif
 
 set number
 set ruler

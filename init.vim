@@ -1,5 +1,3 @@
-set nocp
-set autochdir
 filetype off
 set t_Co=256
 set lazyredraw
@@ -56,7 +54,7 @@ Plug 'godlygeek/tabular'
 Plug 'junegunn/seoul256.vim'
 Plug 'Quramy/vim-js-pretty-template'
 Plug 'Yggdroot/indentLine'
-" Plug 'nightsense/vim-crunchbang'
+Plug 'nightsense/vim-crunchbang'
 Plug 'jiangmiao/auto-pairs'
 Plug 'majutsushi/tagbar'
 Plug 'dyng/ctrlsf.vim'
@@ -64,82 +62,122 @@ Plug 'vim-syntastic/syntastic'
 Plug 'powerman/vim-plugin-ruscmd'
 Plug 'vim-scripts/indentpython.vim'
 Plug 'pgdouyon/vim-evanesco'
-Plug 'junegunn/fzf.vim'
-Plug 'neovim/nvim-lspconfig'
 Plug 'vim-syntastic/syntastic'
-Plug 'hrsh7th/nvim-compe'
-" Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+
+
+Plug 'neovim/nvim-lspconfig'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/nvim-cmp'
+
+" For vsnip users.
+Plug 'hrsh7th/cmp-vsnip'
+Plug 'hrsh7th/vim-vsnip'
+
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 
 call plug#end()
 
-" nnoremap <Leader>gd <Plug>(lua vim.lsp.buf.definition())
-" nnoremap <Leader>gt <Plug>(lua vim.lsp.buf.type_definition())
-" nnoremap <Leader>gi <Plug>(lua vim.lsp.buf.implementation())
-" nnoremap <Leader>gu <Plug>(lua vim.lsp.buf.references())
-" nnoremap <Leader>gr <Plug>(lua vim.lsp.buf.rename())
+set completeopt=menu,menuone,noselect
 
 lua << EOF
-local nvim_lsp = require('lspconfig')
-local compe = require('compe')
+  local nvim_lsp = require('lspconfig')
+  local cmp = require('cmp')
+  local cmp_nvim_lsp = require('cmp_nvim_lsp')
 
--- Be aware of a difference between pyls and pylsp
--- python-language-server vs python-lsp-server
-local servers = {"ccls", "gopls", "pylsp"}
+  cmp.setup {
+    snippet = {
+      expand = function(args)
+        require('luasnip').lsp_expand(args.body)
+      end,
+    },
+    mapping = {
+      ['<C-p>'] = cmp.mapping.select_prev_item(),
+      ['<C-n>'] = cmp.mapping.select_next_item(),
+      ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+      ['<C-f>'] = cmp.mapping.scroll_docs(4),
+      ['<C-Space>'] = cmp.mapping.complete(),
+      ['<C-e>'] = cmp.mapping.close(),
+      ['<CR>'] = cmp.mapping.confirm {
+        behavior = cmp.ConfirmBehavior.Replace,
+        select = true,
+      },
+      ['<Tab>'] = function(fallback)
+        if cmp.visible() then
+          cmp.select_next_item()
+        elseif luasnip.expand_or_jumpable() then
+          luasnip.expand_or_jump()
+        else
+          fallback()
+        end
+      end,
+      ['<S-Tab>'] = function(fallback)
+        if cmp.visible() then
+          cmp.select_prev_item()
+        elseif luasnip.jumpable(-1) then
+          luasnip.jump(-1)
+        else
+          fallback()
+        end
+      end,
+    },
+    sources = {
+      { name = 'nvim_lsp' },
+      { name = 'luasnip' },
+    },
+  }
 
-local on_attach = function(client, bufnr)
+  -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline('/', {
+    sources = {
+      { name = 'buffer' }
+    }
+  })
 
-  print("LSP started.");
-  -- require'completion'.on_attach(client)
-  -- require'diagnostic'.on_attach(client)
+  -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline(':', {
+    sources = cmp.config.sources({
+      { name = 'path' }
+    }, {
+      { name = 'cmdline' }
+    })
+  })
 
-  local opts = { noremap = true }
 
-  vim.api.nvim_set_keymap('n','<Leader>gd','<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  vim.api.nvim_set_keymap('n','<Leader>gt','<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-  vim.api.nvim_set_keymap('n','<Leader>gi','<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-  vim.api.nvim_set_keymap('n','<Leader>gu','<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  vim.api.nvim_set_keymap('n','<Leader>gr','<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-end
+  vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+    vim.lsp.diagnostic.on_publish_diagnostics, {
+      underline = true,
+      virtual_text = true,
+  })
 
-vim.o.completeopt = "menuone,noselect"
+  local on_attach = function(client, bufnr)
 
-vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
- vim.lsp.diagnostic.on_publish_diagnostics, {
-   underline = true,
-   virtual_text = true,
- }
-)
+    print("LSP started.");
 
-compe.setup{
-    enabled = true;
-    autocomplete = true;
-    debug = false;
-    min_length = 0;
-    preselect = 'enable';
-    throttle_time = 80;
-    source_timeout = 200;
-    incomplete_delay = 400;
-    max_abbr_width = 100;
-    max_kind_width = 100;
-    max_menu_width = 100;
-    documentation = true;
+    local opts = { noremap = true }
 
-    source = {
-        path = true;
-        buffer = true;
-        calc = true;
-        nvim_lsp = true;
-        nvim_lua = true;
-        vsnip = true;
-        ultisnips = true;
-    };
-} 
+    vim.api.nvim_set_keymap('n','<Leader>gd','<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+    vim.api.nvim_set_keymap('n','<Leader>gt','<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+    vim.api.nvim_set_keymap('n','<Leader>gi','<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+    vim.api.nvim_set_keymap('n','<Leader>gu','<cmd>lua vim.lsp.buf.references()<CR>', opts)
+    vim.api.nvim_set_keymap('n','<Leader>gr','<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  end
 
-for _, lsp in ipairs(servers) do
-  nvim_lsp[lsp].setup { on_attach = on_attach }
-  root_dir = nvim_lsp.util.root_pattern('.git')
-end
+  local servers = {"ccls", "gopls", "pylsp"}
+
+  for _, server in pairs(servers) do
+    local capabilities = cmp_nvim_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities())
+    nvim_lsp[server].setup {
+      capabilities = capabilities,
+      on_attach = on_attach,
+      root_dir = nvim_lsp.util.root_pattern('.git')
+    }
+  end
+
 EOF
+
 
 function! SetLSPHighlights()
     highlight LspDiagnosticsVirtualTextError ctermfg=160 ctermbg=236 guifg=#ff0000 guibg=#444444
@@ -187,21 +225,11 @@ let g:syntastic_check_on_wq = 0
 
 
 au BufNewFile,BufRead *.py set tabstop=4 softtabstop=4 shiftwidth=4 textwidth=79 expandtab autoindent fileformat=unix
-let g:jedi#auto_vim_configuration = 1 
-" let g:jedi#goto_definiton = "<leader>d"
-"let g:jedi#goto_definitions_command = ''  " dynamically done for ft=python.
-let g:jedi#show_call_signatures = 2
-let g:jedi#use_tabs_not_buffers = 0  " current default is 1.
-" let g:jedi#rename_command = '<Leader>gR'
-" let g:jedi#usages_command = '<Leader>gu'
-let g:jedi#completions_enabled = 0
-let g:jedi#smart_auto_mappings = 1
-
 
 inoremap <expr><tab> pumvisible() ? "\<c-n>" : "<Tab>"
 inoremap <expr><S-tab> pumvisible() ? "\<c-p>" : "<S-Tab>"
 set guicursor=
-let g:NERDTreeWinSize=50
+let g:NERDTreeWinSize=40
 
 command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
 

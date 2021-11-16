@@ -1,12 +1,14 @@
+# Created by newuser for 5.4.2
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 # Path to your oh-my-zsh installation.
-#
+export TERM="xterm-256color" 
+export ZSH=$HOME/.oh-my-zsh
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="powerlevel9k/powerlevel9k"
-plugins=(git git-completion colored-man colorize virtualenv pip python osx zsh-syntax-highlighting jsontools)
+ZSH_THEME="powerlevel10k/powerlevel10k"
+plugins=(git colorize python jsontools docker)
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -81,6 +83,7 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 #
+export PATH=$PATH:/home/antonio/.local/bin
 alias vim="nvim"
 alias vimconfig="vim ~/.vimrc"
 alias nvimconfig="nvim ~/.config/nvim/init.vim"
@@ -88,8 +91,6 @@ alias zshconfig="nvim ~/.zshrc"
 alias tmuxconfig="nvim ~/.tmux.conf"
 alias prettyjson='python -m json.tool'
 alias tmux="TERM=screen-256color-bce tmux"
-alias docker_rmc="docker rm $(docker ps -a | awk 'FNR > 1 {print $1}')"
-alias docker_rmi="docker rmi $(docker images -a | awk 'FNR > 1 {print $3}')"
 POWERLEVEL9K_CONTEXT_TEMPLATE=%n@%m
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir vcs)
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status root_indicator background_jobs aws nodeenv pyenv time)
@@ -100,3 +101,4 @@ POWERLEVEL9K_PROMPT_ON_NEWLINE=true
 POWERLEVEL9K_VCS_MODIFIED_BACKGROUND='208'
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+source <(kubectl completion zsh)

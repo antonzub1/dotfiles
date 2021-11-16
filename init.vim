@@ -56,7 +56,7 @@ Plug 'godlygeek/tabular'
 Plug 'junegunn/seoul256.vim'
 Plug 'Quramy/vim-js-pretty-template'
 Plug 'Yggdroot/indentLine'
-Plug 'nightsense/vim-crunchbang'
+" Plug 'nightsense/vim-crunchbang'
 Plug 'jiangmiao/auto-pairs'
 Plug 'majutsushi/tagbar'
 Plug 'dyng/ctrlsf.vim'
@@ -82,7 +82,9 @@ lua << EOF
 local nvim_lsp = require('lspconfig')
 local compe = require('compe')
 
-local servers = {"pyls", "ccls", "gopls"}
+-- Be aware of a difference between pyls and pylsp
+-- python-language-server vs python-lsp-server
+local servers = {"ccls", "gopls", "pylsp"}
 
 local on_attach = function(client, bufnr)
 
@@ -137,7 +139,6 @@ for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup { on_attach = on_attach }
   root_dir = nvim_lsp.util.root_pattern('.git')
 end
-
 EOF
 
 function! SetLSPHighlights()

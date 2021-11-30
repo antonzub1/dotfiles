@@ -5,7 +5,6 @@ set ttyfast
 set nocursorline
 
 set tags=./tags,tags;$HOME
-set rtp+=/home/antonzub/fzf/bin/fzf
 
 noremap <Up> <NOP>
 noremap <Down> <NOP>
@@ -48,22 +47,17 @@ Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
-Plug 'skywind3000/asyncrun.vim'
+Plug 'skywind3000/asyncrun.vim' " TODO: read about async tasks in neovim
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'godlygeek/tabular'
-Plug 'junegunn/seoul256.vim'
-Plug 'Quramy/vim-js-pretty-template'
 Plug 'Yggdroot/indentLine'
-Plug 'nightsense/vim-crunchbang'
 Plug 'jiangmiao/auto-pairs'
 Plug 'majutsushi/tagbar'
-Plug 'dyng/ctrlsf.vim'
-Plug 'vim-syntastic/syntastic'
 Plug 'powerman/vim-plugin-ruscmd'
 Plug 'vim-scripts/indentpython.vim'
 Plug 'pgdouyon/vim-evanesco'
-Plug 'vim-syntastic/syntastic'
-
+Plug 'dense-analysis/ale'
+Plug 'vim-test/vim-test'
 
 Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/cmp-nvim-lsp'
@@ -76,7 +70,10 @@ Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-vsnip'
 Plug 'hrsh7th/vim-vsnip'
 
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/goyo.vim'
+Plug 'junegunn/seoul256.vim'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
 
 call plug#end()
 
@@ -174,9 +171,7 @@ lua << EOF
       on_attach = on_attach
     }
   end
-
 EOF
-
 
 function! SetLSPHighlights()
     highlight LspDiagnosticsVirtualTextError ctermfg=160 ctermbg=236 guifg=#ff0000 guibg=#444444
@@ -211,7 +206,6 @@ set softtabstop=4
 set shiftwidth=4 
 set expandtab
 
-
 map <C-n> :NERDTreeToggle<CR>
 let NERDTreeShowHidden=1
 let g:airline_powerline_fonts=1
@@ -220,23 +214,27 @@ let g:airline_theme='bubblegum'
 nmap <F8> :TagbarToggle<CR>
 map <C-f> :FZF<CR>
 
-let g:syntastic_check_on_wq = 0
-
-
 au BufNewFile,BufRead *.py set tabstop=4 softtabstop=4 shiftwidth=4 textwidth=79 expandtab autoindent fileformat=unix
 
-inoremap <expr><tab> pumvisible() ? "\<c-n>" : "<Tab>"
-inoremap <expr><S-tab> pumvisible() ? "\<c-p>" : "<S-Tab>"
 set guicursor=
 let g:NERDTreeWinSize=40
 
-command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
-
 function! s:with_git_root()
   let root = systemlist('git rev-parse --show-toplevel')[0]
-  return v:shell_error ? {} : {'dir': root}
+  return v:shell_error ? {'dir': '.'} : {'dir': root}
 endfunction
 
+command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
 command! -bang -nargs=* Rag call fzf#vim#ag(<q-args>, extend(s:with_git_root(), {'options': '--delimiter : --nth 4..'}), <bang>0)
 
-let g:syntastic_python_checkers = ['pylint']
+let test#strategy = 'neovim'
+let g:test#neovim#start_normal = 1
+let test#python#runner = 'pytest'
+let test#project_root = s:with_git_root()['dir']
+
+nmap <silent> t<C-n> :TestNearest<CR>
+nmap <silent> t<C-f> :TestFile<CR>
+nmap <silent> t<C-s> :TestSuite<CR>
+nmap <silent> t<C-l> :TestLast<CR>
+nmap <silent> t<C-g> :TestVisit<CR>
+

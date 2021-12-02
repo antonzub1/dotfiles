@@ -4,6 +4,8 @@ set lazyredraw
 set ttyfast
 set nocursorline
 
+
+
 set tags=./tags,tags;$HOME
 
 noremap <Up> <NOP>
@@ -18,7 +20,6 @@ vnoremap <Up> <NOP>
 vnoremap <Down> <NOP>
 vnoremap <Left> <NOP>
 vnoremap <Right> <NOP>
-nnoremap <Space>w <C-w>
 nnoremap <silent><Leader><C-]> <C-w><C-]>
 
 tnoremap <Esc> <C-\><C-n>
@@ -69,6 +70,8 @@ Plug 'hrsh7th/nvim-cmp'
 " For vsnip users.
 Plug 'hrsh7th/cmp-vsnip'
 Plug 'hrsh7th/vim-vsnip'
+Plug 'L3MON4D3/LuaSnip'
+Plug 'saadparwaiz1/cmp_luasnip'
 
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/seoul256.vim'
@@ -83,11 +86,12 @@ lua << EOF
   local nvim_lsp = require('lspconfig')
   local cmp = require('cmp')
   local cmp_nvim_lsp = require('cmp_nvim_lsp')
+  local luasnip = require('luasnip')
 
   cmp.setup {
     snippet = {
       expand = function(args)
-        require('luasnip').lsp_expand(args.body)
+        luasnip.lsp_expand(args.body)
       end,
     },
     mapping = {
@@ -168,7 +172,7 @@ lua << EOF
     local capabilities = cmp_nvim_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities())
     nvim_lsp[server].setup {
       capabilities = capabilities,
-      on_attach = on_attach
+      on_attach = on_attach,
     }
   end
 EOF
@@ -230,6 +234,7 @@ command! -bang -nargs=* Rag call fzf#vim#ag(<q-args>, extend(s:with_git_root(), 
 let test#strategy = 'neovim'
 let g:test#neovim#start_normal = 1
 let test#python#runner = 'pytest'
+let test#python#pytest#options = '-s'
 let test#project_root = s:with_git_root()['dir']
 
 nmap <silent> t<C-n> :TestNearest<CR>

@@ -5,7 +5,6 @@ set ttyfast
 set nocursorline
 
 
-
 set tags=./tags,tags;$HOME
 
 noremap <Up> <NOP>
@@ -215,8 +214,6 @@ let NERDTreeShowHidden=1
 let g:airline_powerline_fonts=1
 let g:airline_theme='bubblegum'
 
-nmap <F8> :TagbarToggle<CR>
-map <C-f> :FZF<CR>
 
 au BufNewFile,BufRead *.py set tabstop=4 softtabstop=4 shiftwidth=4 textwidth=79 expandtab autoindent fileformat=unix
 
@@ -243,3 +240,6 @@ nmap <silent> t<C-s> :TestSuite<CR>
 nmap <silent> t<C-l> :TestLast<CR>
 nmap <silent> t<C-g> :TestVisit<CR>
 
+nmap <F8> :TagbarToggle<CR>
+map <C-f> :Rag<CR>
+map <C-p> :FZF<CR>

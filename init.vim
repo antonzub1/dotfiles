@@ -165,7 +165,7 @@ lua << EOF
     vim.api.nvim_set_keymap('n','<Leader>gr','<cmd>lua vim.lsp.buf.rename()<CR>', opts)
   end
 
-  local servers = {"ccls", "gopls", "pylsp"}
+  local servers = {"ccls", "gopls", "pylsp", "rust_analyzer"}
 
   for _, server in pairs(servers) do
     local capabilities = cmp_nvim_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities())

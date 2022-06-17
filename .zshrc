@@ -63,11 +63,11 @@ source $ZSH/oh-my-zsh.sh
 # export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
+if [[ -n $SSH_CONNECTION ]]; then
+  export EDITOR='nvim'
+else
+  export EDITOR='mvim'
+fi
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -95,10 +95,11 @@ POWERLEVEL9K_CONTEXT_TEMPLATE=%n@%m
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir vcs)
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status root_indicator background_jobs aws nodeenv pyenv time)
 POWERLEVEL9K_SHORTEN_DIR_LENGTH=2
-# POWERLEVEL9K_SHORTEN_STRATEGY="truncate_with_folder_marker"
 POWERLEVEL9K_SHORTEN_DELIMITER=".."
 POWERLEVEL9K_PROMPT_ON_NEWLINE=true
 POWERLEVEL9K_VCS_MODIFIED_BACKGROUND='208'
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-source <(kubectl completion zsh)
+[ -f /usr/share/nvm/init-nvm.sh ] && source /usr/share/nvm/init-nvm.sh
+[ -x $"(kubectl)" ] && source <(kubectl completion zsh)
+

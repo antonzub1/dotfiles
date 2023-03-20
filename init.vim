@@ -58,6 +58,7 @@ Plug 'vim-scripts/indentpython.vim'
 Plug 'pgdouyon/vim-evanesco'
 Plug 'dense-analysis/ale'
 Plug 'vim-test/vim-test'
+Plug 't9md/vim-choosewin'
 
 Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/cmp-nvim-lsp'
@@ -66,7 +67,6 @@ Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/nvim-cmp'
 
-Plug 'sakhnik/nvim-gdb', { 'do': ':!./install.sh' }
 
 " For vsnip users.
 Plug 'hrsh7th/cmp-vsnip'
@@ -107,10 +107,10 @@ lua << EOF
         select = true,
       },
       ['<Tab>'] = function(fallback)
-        if cmp.visible() then
-          cmp.select_next_item()
-        elseif luasnip.expand_or_jumpable() then
+        if luasnip.expand_or_jumpable() then
           luasnip.expand_or_jump()
+        elseif cmp.visible() then
+          cmp.select_next_item()
         else
           fallback()
         end
@@ -141,18 +141,35 @@ lua << EOF
   -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
   cmp.setup.cmdline(':', {
     sources = cmp.config.sources({
-      { name = 'path' }
     }, {
       { name = 'cmdline' }
     })
   })
 
 
-  vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
-    vim.lsp.diagnostic.on_publish_diagnostics, {
-      underline = true,
-      virtual_text = true,
+  local border = {
+      {"╔", "FloatBorder"},
+      {"═", "FloatBorder"},
+      {"╗", "FloatBorder"},
+      {"║", "FloatBorder"},
+      {"╝", "FloatBorder"},
+      {"═", "FloatBorder"},
+      {"╚", "FloatBorder"},
+      {"║", "FloatBorder"}
+  }
+  vim.diagnostic.config({
+    underline = false,
+    virtual_text = false, -- Turn off inline diagnostics
+    float = {
+      border = border,
+      source = "always",
+      update_in_insert = true
+      },
   })
+
+  vim.o.updatetime = 250
+  vim.cmd [[autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]]
+  vim.cmd [[autocmd! ColorScheme * highlight FloatBorder guifg=white guibg=#1f2335]]
 
   local on_attach = function(client, bufnr)
 
@@ -167,10 +184,10 @@ lua << EOF
     vim.api.nvim_set_keymap('n','<Leader>gr','<cmd>lua vim.lsp.buf.rename()<CR>', opts)
   end
 
-  local servers = {"ccls", "gopls", "pylsp", "rust_analyzer"}
+  local servers = {"ccls", "gopls", "pylsp", "rust_analyzer", "terraformls"}
 
   for _, server in pairs(servers) do
-    local capabilities = cmp_nvim_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities())
+    local capabilities = cmp_nvim_lsp.default_capabilities (vim.lsp.protocol.make_client_capabilities())
     nvim_lsp[server].setup {
       capabilities = capabilities,
       on_attach = on_attach,
@@ -217,7 +234,7 @@ let g:airline_powerline_fonts=1
 let g:airline_theme='bubblegum'
 
 
-au BufNewFile,BufRead *.py set tabstop=4 softtabstop=4 shiftwidth=4 textwidth=79 expandtab autoindent fileformat=unix
+au BufNewFile,BufRead *.py set tabstop=4 softtabstop=4 shiftwidth=4 textwidth=120 expandtab autoindent fileformat=unix
 
 set guicursor=
 let g:NERDTreeWinSize=40
@@ -247,19 +264,44 @@ map <C-f> :Rag<CR>
 map <C-p> :FZF<CR>
 
 
-function! NvimGdbNoTKeymaps()
-  tnoremap <silent> <buffer> <esc> <c-\><c-n>
+" Check if NERDTree is open or active
+function! IsNERDTreeOpen()
+  return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
 endfunction
 
-let g:nvimgdb_config_override = {
-  \ 'key_next': 'n',
-  \ 'key_step': 's',
-  \ 'key_finish': 'f',
-  \ 'key_continue': 'c',
-  \ 'key_until': 'u',
-  \ 'key_breakpoint': 'b',
-  \ 'set_tkeymaps': "NvimGdbNoTKeymaps",
-  \ }
+function! CheckIfCurrentBufferIsFile()
+  return strlen(expand('%')) > 0
+endfunction
 
+" Call NERDTreeFind iff NERDTree is active, current window contains a modifiable
+" file, and we're not in vimdiff
+function! SyncTree()
+  if &modifiable && IsNERDTreeOpen() && CheckIfCurrentBufferIsFile() && !&diff
+    NERDTreeFind
+    wincmd p
+  endif
+endfunction
 
+" Highlight currently open buffer in NERDTree
+autocmd BufRead * call SyncTree()
 
+function! ToggleTree()
+  if CheckIfCurrentBufferIsFile()
+    if IsNERDTreeOpen()
+      NERDTreeClose
+    else
+      NERDTreeFind
+    endif
+  else
+    NERDTree
+  endif
+endfunction
+
+" open NERDTree with ctrl + n
+nmap <C-n> :call ToggleTree()<CR>
+let g:choosewin_overlay_enable = 1
+nmap - <Plug>(choosewin)
+
+nnoremap <silent> <C-k> :bnext<CR>:call SyncTree()<CR>
+nnoremap <silent> <C-j> :bprev<CR>:call SyncTree()<CR>
+nnoremap <silent> <F2> :NERDTreeToggle<cr><c-w>l:call SyncTree()<cr><c-w>h

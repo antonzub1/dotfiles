@@ -60,6 +60,9 @@ Plug 'dense-analysis/ale'
 Plug 'vim-test/vim-test'
 Plug 't9md/vim-choosewin'
 
+Plug 'christoomey/vim-tmux-navigator'
+Plug 'michaelb/sniprun', {'do': 'sh install.sh'}
+
 Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
@@ -244,8 +247,8 @@ function! s:with_git_root()
   return v:shell_error ? {'dir': '.'} : {'dir': root}
 endfunction
 
-command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
-command! -bang -nargs=* Rag call fzf#vim#ag(<q-args>, extend(s:with_git_root(), {'options': '--delimiter : --nth 4..'}), <bang>0)
+command! -bang -nargs=* Rag call fzf#vim#ag(<q-args>, extend(s:with_git_root(), {'options': ['--delimiter', 'nth 4..', '--info=inline', '--preview', 'cat {}']}), <bang>0)
+command! -bang -nargs=* Ctrlp call fzf#vim#files(<q-args>, fzf#vim#with_preview({'options': ['--layout=reverse', '--info=inline']}), <bang>0)
 
 let test#strategy = 'neovim'
 let g:test#neovim#start_normal = 1
@@ -261,7 +264,7 @@ nmap <silent> t<C-g> :TestVisit<CR>
 
 nmap <F8> :TagbarToggle<CR>
 map <C-f> :Rag<CR>
-map <C-p> :FZF<CR>
+map <C-P> :Ctrlp<CR>
 
 
 " Check if NERDTree is open or active

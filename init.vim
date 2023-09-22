@@ -247,8 +247,12 @@ function! s:with_git_root()
   return v:shell_error ? {'dir': '.'} : {'dir': root}
 endfunction
 
-command! -bang -nargs=* Rag call fzf#vim#ag(<q-args>, extend(s:with_git_root(), {'options': ['--delimiter', 'nth 4..', '--info=inline', '--preview', 'cat {}']}), <bang>0)
-command! -bang -nargs=* Ctrlp call fzf#vim#files(<q-args>, fzf#vim#with_preview({'options': ['--layout=reverse', '--info=inline']}), <bang>0)
+command! -bang -nargs=* Ag call fzf#vim#ag(
+            \ <q-args>, 
+            \ fzf#vim#with_preview(extend(s:with_git_root(), {'options': ['--delimiter', 'nth 4..', '--info=inline', '--layout=reverse']})), <bang>0)
+command! -bang -nargs=* Ctrlp call fzf#vim#files(
+            \ <q-args>,
+            \ fzf#vim#with_preview({'options': ['--layout=reverse', '--info=inline']}), <bang>0)
 
 let test#strategy = 'neovim'
 let g:test#neovim#start_normal = 1
@@ -263,7 +267,7 @@ nmap <silent> t<C-l> :TestLast<CR>
 nmap <silent> t<C-g> :TestVisit<CR>
 
 nmap <F8> :TagbarToggle<CR>
-map <C-f> :Rag<CR>
+map <C-f> :Ag<CR>
 map <C-P> :Ctrlp<CR>
 
 

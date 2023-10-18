@@ -271,6 +271,7 @@ map <C-f> :Ag<CR>
 map <C-P> :Ctrlp<CR>
 
 
+let g:NERDTreeMinimalMenu=1
 " Check if NERDTree is open or active
 function! IsNERDTreeOpen()
   return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
@@ -303,7 +304,6 @@ function! ToggleTree()
     NERDTree
   endif
 endfunction
-
 " open NERDTree with ctrl + n
 nmap <C-n> :call ToggleTree()<CR>
 let g:choosewin_overlay_enable = 1

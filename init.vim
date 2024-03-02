@@ -36,7 +36,8 @@ nnoremap <A-k> <C-w>k
 nnoremap <A-l> <C-w>l
 
 call plug#begin('~/.local/share/nvim/plugged')
-Plug 'sheerun/vim-polyglot'
+" Plug 'sheerun/vim-polyglot'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'scrooloose/nerdtree'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -47,7 +48,6 @@ Plug 'tpope/vim-speeddating'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
-Plug 'skywind3000/asyncrun.vim' " TODO: read about async tasks in neovim
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'godlygeek/tabular'
 Plug 'Yggdroot/indentLine'
@@ -56,7 +56,6 @@ Plug 'majutsushi/tagbar'
 Plug 'powerman/vim-plugin-ruscmd'
 Plug 'vim-scripts/indentpython.vim'
 Plug 'pgdouyon/vim-evanesco'
-Plug 'dense-analysis/ale'
 Plug 'vim-test/vim-test'
 Plug 't9md/vim-choosewin'
 
@@ -150,28 +149,33 @@ lua << EOF
   })
 
 
-  local border = {
-      {"╔", "FloatBorder"},
-      {"═", "FloatBorder"},
-      {"╗", "FloatBorder"},
-      {"║", "FloatBorder"},
-      {"╝", "FloatBorder"},
-      {"═", "FloatBorder"},
-      {"╚", "FloatBorder"},
-      {"║", "FloatBorder"}
-  }
   vim.diagnostic.config({
     underline = false,
-    virtual_text = false, -- Turn off inline diagnostics
+    virtual_text = false,
+   	-- signs = {
+	--   active = signs, -- show signs
+	-- },
     float = {
-      border = border,
-      source = "always",
-      update_in_insert = true
+      border = {
+          {"╔", "FloatBorder"},
+          {"═", "FloatBorder"},
+          {"╗", "FloatBorder"},
+          {"║", "FloatBorder"},
+          {"╝", "FloatBorder"},
+          {"═", "FloatBorder"},
+          {"╚", "FloatBorder"},
+          {"║", "FloatBorder"}
       },
+      source = "always",
+      update_in_insert = true,
+      severity_sort = true,
+    },
   })
 
+  vim.diagnostic.config({ virtual_text = false })
+
   vim.o.updatetime = 250
-  vim.cmd [[autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]]
+  vim.cmd [[autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false, max_width=80})]]
   vim.cmd [[autocmd! ColorScheme * highlight FloatBorder guifg=white guibg=#1f2335]]
 
   local on_attach = function(client, bufnr)
@@ -195,21 +199,9 @@ lua << EOF
       capabilities = capabilities,
       on_attach = on_attach,
     }
+
   end
 EOF
-
-function! SetLSPHighlights()
-    highlight LspDiagnosticsVirtualTextError ctermfg=160 ctermbg=236 guifg=#ff0000 guibg=#444444
-    highlight LspDiagnosticsVirtualTextWarning ctermfg=173 ctermbg=236 guifg=#000000 guibg=#df5f00
-    highlight LspDiagnosticsDefaultInformation guifg=yellow gui=bold,italic,underline
-    highlight LspDiagnosticsDefaultHint ctermfg=179 ctermbg=236 guifg=#d7af5f guibg=#444444
-    highlight LspDiagnosticsUnderlineError guifg=#EB4917 gui=undercurl
-    highlight LspDiagnosticsUnderlineWarning guifg=#EBA217 gui=undercurl
-    highlight LspDiagnosticsUnderlineInformation guifg=#17D6EB, gui=undercurl
-    highlight LspDiagnosticsUnderlineHint guifg=#17EB7A gui=undercurl
-endfunction
-
-autocmd ColorScheme * call SetLSPHighlights()
 
 syntax on
 set background=dark
@@ -231,7 +223,7 @@ set softtabstop=4
 set shiftwidth=4 
 set expandtab
 
-map <C-n> :NERDTreeToggle<CR>
+map <C-n :Ctrlp<CR>
 let NERDTreeShowHidden=1
 let g:airline_powerline_fonts=1
 let g:airline_theme='bubblegum'
@@ -305,7 +297,8 @@ function! ToggleTree()
   endif
 endfunction
 " open NERDTree with ctrl + n
-nmap <C-n> :call ToggleTree()<CR>
+" nmap <C-n> :call ToggleTree()<CR>
+nmap <C-n> :Ctrlp<CR>
 let g:choosewin_overlay_enable = 1
 nmap - <Plug>(choosewin)
 

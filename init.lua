@@ -12,6 +12,8 @@ vim.opt.ttyfast = true
 -- Disable cursorline
 vim.opt.cursorline = false
 
+vim.opt.guicursor = ""
+
 -- Set tags search path
 vim.opt.tags:append('./tags')
 vim.opt.tags:append('tags;$HOME')
@@ -112,7 +114,6 @@ vim.api.nvim_set_keymap('n', '<A-k>', '<C-w>k', { noremap = true })
 vim.api.nvim_set_keymap('n', '<A-l>', '<C-w>l', { noremap = true })
 
 
-
 -- Mappings for testing
 vim.api.nvim_set_keymap('n', '<silent> t<C-n>', ':TestNearest<CR>', { noremap = true })
 vim.api.nvim_set_keymap('n', '<silent> t<C-f>', ':TestFile<CR>', { noremap = true })
@@ -124,20 +125,21 @@ vim.api.nvim_set_keymap('n', '<silent> t<C-g>', ':TestVisit<CR>', { noremap = tr
 vim.api.nvim_set_keymap('n', '<C-f>', ':Ag<CR>', { noremap = true })
 vim.api.nvim_set_keymap('n', '<C-P>', ':CtrlP<CR>', { noremap = true })
 vim.api.nvim_set_keymap('n', '<C-n>', ':CtrlP<CR>', { noremap = true })
+vim.api.nvim_set_keymap('n', '<C-b>', ':Buffers<CR>', { noremap = true })
 vim.api.nvim_set_keymap('n', '-', '<Plug>(choosewin)', {})
 
 
 vim.cmd("command! -bang -nargs=* Ag call fzf#vim#ag(" ..
             "<q-args>," ..
             "fzf#vim#with_preview({'options': ['--delimiter', 'nth 4..', '--info=inline', '--layout=reverse']}), <bang>0)")
-
 vim.cmd("command! -bang -nargs=* CtrlP call fzf#vim#files(" ..
             "<q-args>," ..
             "fzf#vim#with_preview({'options': ['--layout=reverse', '--info=inline']}), <bang>0)")
+vim.cmd("command! -bang -nargs=* Buffers call fzf#vim#buffers(" ..
+            "<q-args>," ..
+            "fzf#vim#with_preview({'options': ['--layout=reverse', '--info=inline']}), <bang>0)")
 
-local vim = vim
 local Plug = vim.fn['plug#']
-
 vim.call('plug#begin', '~/.local/share/nvim/plugged')
 Plug ('nvim-treesitter/nvim-treesitter', { ['do'] = ':TSUpdate' })
 Plug ('scrooloose/nerdtree')

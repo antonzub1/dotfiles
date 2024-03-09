@@ -166,12 +166,14 @@ Plug ('t9md/vim-choosewin')
 Plug ('christoomey/vim-tmux-navigator')
 Plug ('michaelb/sniprun', { ['do'] = 'sh install.sh' })
 
+-- LSP plugins
 Plug ('neovim/nvim-lspconfig')
 Plug ('hrsh7th/cmp-nvim-lsp')
 Plug ('hrsh7th/cmp-buffer')
 Plug ('hrsh7th/cmp-path')
 Plug ('hrsh7th/cmp-cmdline')
 Plug ('hrsh7th/nvim-cmp')
+Plug ('mrcjkb/rustaceanvim', { ['tag'] = '4.11.0' } )
 
 
 -- For vsnip users.
@@ -251,6 +253,10 @@ cmp.setup.cmdline(':', {
   })
 })
 
+vim.fn.sign_define("DiagnosticSignError", {text = "", texthl = "DiagnosticSignError", linehl="", numhl="DiagnosticSignError"})
+vim.fn.sign_define("DiagnosticSignWarn", {text = "", texthl = "DiagnosticSignWarn", linehl="", numhl="DiagnosticSignWarn"})
+vim.fn.sign_define("DiagnosticSignInformation", {text = "", texthl = "DiagnosticSignInformation", linehl="", numhl="DiagnosticSignInformation"})
+vim.fn.sign_define("DiagnosticSignHint", {text = "", texthl = "DiagnosticSignHint", linehl="", numhl="DiagnosticSignHint"})
 
 vim.diagnostic.config({
   underline = true,

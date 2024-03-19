@@ -197,6 +197,10 @@ local cmp_nvim_lsp = require('cmp_nvim_lsp')
 local luasnip = require('luasnip')
 
 cmp.setup {
+  -- window = {
+  --   completion = cmp.config.window.bordered(),
+  --   documentation = cmp.config.window.bordered(),
+  -- },
   snippet = {
     expand = function(args)
       luasnip.lsp_expand(args.body)
@@ -261,23 +265,11 @@ vim.fn.sign_define("DiagnosticSignHint", {text = "", texthl = "DiagnosticSignHin
 vim.diagnostic.config({
   underline = true,
   virtual_text = false,
-  virtual_lines = false,
-    -- signs = {
-  --   active = signs, -- show signs
-  -- },
   float = {
-    border = {
-        {"╔", "FloatBorder"},
-        {"═", "FloatBorder"},
-        {"╗", "FloatBorder"},
-        {"║", "FloatBorder"},
-        {"╝", "FloatBorder"},
-        {"═", "FloatBorder"},
-        {"╚", "FloatBorder"},
-        {"║", "FloatBorder"}
-    },
+    style = "minimal",
+    border = "rounded",
     source = "always",
-    update_in_insert = true,
+    update_in_insert = false,
     severity_sort = true,
   },
 })
@@ -285,7 +277,8 @@ vim.diagnostic.config({
 
 vim.o.updatetime = 250
 vim.cmd [[autocmd! ColorScheme * highlight FloatBorder guifg=white guibg=#1f2335]]
-vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+-- vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+vim.api.nvim_create_autocmd({ "CursorHold" }, {
   group = vim.api.nvim_create_augroup("float_diagnostic_cursor", { clear = true }),
   callback = function ()
     vim.diagnostic.open_float(nil, {focus=false, scope="cursor", max_width=80})
@@ -294,15 +287,17 @@ vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
 
 local on_attach = function(client, bufnr)
 
-  print("LSP started.");
 
   local opts = { noremap = true }
 
-  vim.api.nvim_set_keymap('n','<Leader>gd','<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  vim.api.nvim_set_keymap('n','<Leader>gt','<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-  vim.api.nvim_set_keymap('n','<Leader>gi','<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-  vim.api.nvim_set_keymap('n','<Leader>gu','<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  vim.api.nvim_set_keymap('n','<Leader>gr','<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  vim.api.nvim_set_keymap('n', '<Leader>gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  vim.api.nvim_set_keymap('n', '<Leader>gt', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+  vim.api.nvim_set_keymap('n', '<Leader>gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+  vim.api.nvim_set_keymap('n', '<Leader>gu', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+  vim.api.nvim_set_keymap('n', '<Leader>gr', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  vim.api.nvim_set_keymap('n', '<Leader>gh', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+
+  print("LSP started.");
 end
 
 local servers = {"ccls", "gopls", "pylsp", "rust_analyzer", "terraformls", "lua_ls"}

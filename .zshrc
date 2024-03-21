@@ -4,6 +4,9 @@
 # Path to your oh-my-zsh installation.
 export TERM="xterm-256color" 
 export ZSH=$HOME/.oh-my-zsh
+export HISTCONTROL="ignorespace:ignoredups"
+export HISTORY_IGNORE="*AWS*"
+# export HISTORY_IGNORE="*AWS*"
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
@@ -66,7 +69,7 @@ source $ZSH/oh-my-zsh.sh
 if [[ -n $SSH_CONNECTION ]]; then
   export EDITOR='nvim'
 else
-  export EDITOR='mvim'
+  export EDITOR='nvim'
 fi
 
 # Compilation flags
@@ -83,10 +86,11 @@ fi
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 #
-export PATH=$PATH:/home/antonio/.local/bin
+export CARGO_BIN=/home/antonio/.cargo/bin
+export LOCAL_BIN=/home/antonio/.local/bin
+export PATH=$PATH:$LOCAL_BIN:$CARGO_BIN
 alias vim="nvim"
-alias vimconfig="vim ~/.vimrc"
-alias nvimconfig="nvim ~/.config/nvim/init.vim"
+alias nvimconfig="nvim ~/.config/nvim/init.lua"
 alias zshconfig="nvim ~/.zshrc"
 alias tmuxconfig="nvim ~/.tmux.conf"
 alias prettyjson='python -m json.tool'
@@ -101,5 +105,7 @@ POWERLEVEL9K_VCS_MODIFIED_BACKGROUND='208'
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 [ -f /usr/share/nvm/init-nvm.sh ] && source /usr/share/nvm/init-nvm.sh
-[ -x $"(kubectl)" ] && source <(kubectl completion zsh)
+[ -x $(which kubectl) ] && source <(kubectl completion zsh)
+[ -x $(which docker) ] && source <(docker completion zsh)
+[ -x $(which k6) ] && source <(k6 completion zsh)
 

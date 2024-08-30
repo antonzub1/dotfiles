@@ -1,0 +1,59 @@
+[shell]
+program = "tmux attach || tmux new"
+
+[colors.bright]
+black = "#626262"
+blue = "#5c5cff"
+cyan = "#87d7d7"
+green = "#87af87"
+magenta = "#ffafaf"
+red = "#d75f87"
+white = "#ffffff"
+yellow = "#ffd787"
+
+[colors.dim]
+black = "#000000"
+blue = "#258ad1"
+cyan = "#47eded"
+green = "#30aa00"
+magenta = "#ff00ff"
+red = "#b20000"
+white = "#ffffff"
+yellow = "#d8af5f"
+
+[colors.normal]
+black = "#000000"
+blue = "#258ad1"
+cyan = "#47eded"
+green = "#35ba00"
+magenta = "#ff00ff"
+red = "#b20000"
+white = "#ffffff"
+yellow = "#d8af5f"
+
+[colors.primary]
+background = "#3a3a3a"
+foreground = "#d0d0d0"
+
+[cursor.style]
+shape = "Block"
+blinking = "Never"
+
+[font]
+size = 13.0
+
+[font.bold]
+family = "Droid Sans Mono for Powerline"
+style = "Bold"
+
+[font.bold_italic]
+family = "Droid Sans Mono for Powerline"
+style = "Bold Italic"
+
+[font.italic]
+family = "Droid Sans Mono for Powerline"
+style = "Italic"
+
+[font.normal]
+family = "Droid Sans Mono for Powerline"
+style = "Regular"

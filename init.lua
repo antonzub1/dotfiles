@@ -142,6 +142,10 @@ vim.cmd("command! -bang -nargs=* Buffers call fzf#vim#buffers(" ..
 local Plug = vim.fn['plug#']
 vim.call('plug#begin', '~/.local/share/nvim/plugged')
 Plug ('nvim-treesitter/nvim-treesitter', { ['do'] = ':TSUpdate' })
+
+Plug ('nvim-lua/plenary.nvim')
+Plug ('nvim-telescope/telescope.nvim')
+
 Plug ('scrooloose/nerdtree')
 Plug ('vim-airline/vim-airline')
 Plug ('vim-airline/vim-airline-themes')
@@ -166,6 +170,12 @@ Plug ('t9md/vim-choosewin')
 Plug ('christoomey/vim-tmux-navigator')
 Plug ('michaelb/sniprun', { ['do'] = 'sh install.sh' })
 
+-- Appearance, tools
+Plug ('junegunn/goyo.vim')
+Plug ('junegunn/seoul256.vim')
+Plug ('junegunn/fzf', { ['do'] =  './install --bin' } )
+Plug ('junegunn/fzf.vim')
+
 -- LSP plugins
 Plug ('neovim/nvim-lspconfig')
 Plug ('hrsh7th/cmp-nvim-lsp')
@@ -173,8 +183,9 @@ Plug ('hrsh7th/cmp-buffer')
 Plug ('hrsh7th/cmp-path')
 Plug ('hrsh7th/cmp-cmdline')
 Plug ('hrsh7th/nvim-cmp')
-Plug ('mrcjkb/rustaceanvim', { ['tag'] = '4.11.0' } )
+-- Plug ('mrcjkb/rustaceanvim', { ['tag'] = '4.11.0' } )
 
+Plug ('stevearc/overseer.nvim')
 
 -- For vsnip users.
 Plug ('hrsh7th/cmp-vsnip')
@@ -182,10 +193,6 @@ Plug ('hrsh7th/vim-vsnip')
 Plug ('L3MON4D3/LuaSnip')
 Plug ('saadparwaiz1/cmp_luasnip')
 
-Plug ('junegunn/goyo.vim')
-Plug ('junegunn/seoul256.vim')
-Plug ('junegunn/fzf', { ['do'] =  './install --bin' } )
-Plug ('junegunn/fzf.vim')
 
 vim.call('plug#end')
 
@@ -196,11 +203,14 @@ local cmp = require('cmp')
 local cmp_nvim_lsp = require('cmp_nvim_lsp')
 local luasnip = require('luasnip')
 
+require('overseer').setup()
+
 cmp.setup {
-  -- window = {
-  --   completion = cmp.config.window.bordered(),
-  --   documentation = cmp.config.window.bordered(),
-  -- },
+  window = {
+      completion = {
+          winhighlight = "Normal:Pmenu,FloatBorder:Pmenu,CursorLine:CmpItemKindMethod,Search:None",
+      }
+  },
   snippet = {
     expand = function(args)
       luasnip.lsp_expand(args.body)
@@ -243,7 +253,8 @@ cmp.setup {
 }
 
 -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
-cmp.setup.cmdline('/', {
+cmp.setup.cmdline({ '/', '?' }, {
+  mapping = cmp.mapping.preset.cmdline(),
   sources = {
     { name = 'buffer' }
   }
@@ -252,10 +263,13 @@ cmp.setup.cmdline('/', {
 -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
 cmp.setup.cmdline(':', {
   sources = cmp.config.sources({
+      mapping = cmp.mapping.preset.cmdline(),
+      name = "path",
   }, {
     { name = 'cmdline' }
   })
 })
+
 
 vim.fn.sign_define("DiagnosticSignError", {text = "", texthl = "DiagnosticSignError", linehl="", numhl="DiagnosticSignError"})
 vim.fn.sign_define("DiagnosticSignWarn", {text = "", texthl = "DiagnosticSignWarn", linehl="", numhl="DiagnosticSignWarn"})
@@ -267,7 +281,7 @@ vim.diagnostic.config({
   virtual_text = false,
   float = {
     style = "minimal",
-    border = "rounded",
+    border = "single",
     source = "always",
     update_in_insert = false,
     severity_sort = true,
@@ -300,7 +314,14 @@ local on_attach = function(client, bufnr)
   print("LSP started.");
 end
 
-local servers = {"ccls", "gopls", "pylsp", "rust_analyzer", "terraformls", "lua_ls"}
+local servers = {
+    "ccls",
+    "gopls",
+    "lua_ls",
+    "pylsp",
+    "rust_analyzer",
+    "terraformls",
+}
 
 for _, server in pairs(servers) do
   local capabilities = cmp_nvim_lsp.default_capabilities (vim.lsp.protocol.make_client_capabilities())
@@ -311,6 +332,18 @@ for _, server in pairs(servers) do
 
 end
 
+
 -- Set color scheme to seoul256
 vim.cmd('colorscheme seoul256')
 
+vim.api.nvim_set_hl(0, 'CmpItemKindMethod', { fg='#949494', ctermfg=248 })
+
+vim.keymap.set({"i"}, "<C-K>", function() ls.expand() end, {silent = true})
+vim.keymap.set({"i", "s"}, "<C-L>", function() ls.jump( 1) end, {silent = true})
+vim.keymap.set({"i", "s"}, "<C-J>", function() ls.jump(-1) end, {silent = true})
+
+vim.keymap.set({"i", "s"}, "<C-E>", function()
+	if ls.choice_active() then
+		ls.change_choice(1)
+	end
+end, {silent = true})

@@ -333,10 +333,9 @@ for _, server in pairs(servers) do
 end
 
 
--- Set color scheme to seoul256
 vim.cmd('colorscheme seoul256')
 
-vim.api.nvim_set_hl(0, 'CmpItemKindMethod', { fg='#949494', ctermfg=248 })
+vim.api.nvim_set_hl(0, 'CmpItemKind', { fg='#949494', ctermfg=248 })
 
 vim.keymap.set({"i"}, "<C-K>", function() ls.expand() end, {silent = true})
 vim.keymap.set({"i", "s"}, "<C-L>", function() ls.jump( 1) end, {silent = true})

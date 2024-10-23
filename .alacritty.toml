@@ -1,5 +1,6 @@
-[shell]
-program = "tmux attach || tmux new"
+[terminal.shell]
+program = "tmux"
+args = ["new", "-As0"]
 
 [colors.bright]
 black = "#626262"

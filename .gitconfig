@@ -1,0 +1,46 @@
+# https://blog.gitbutler.com/how-git-core-devs-configure-git/
+[alias]
+	status = st
+	st = status
+	co = checkout
+	ci = commit
+	br = branch
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[core]
+	editor = nvim
+[url "git@github.com:"]
+    insteadOf = https://github.com/
+[credential]
+	helper = store
+[diff]
+	tool = vimdiff
+    algorithm = histogram
+    colorMoved = plain
+    mnemonicPrefix = true
+    renames = true
+[column]
+    ui = auto
+[branch]
+    sort = -commiterdate
+[tag]
+    sort = version:refname
+[commit]
+    verbose = true
+[fetch]
+    prune = true
+    pruneTags = true
+    all = true
+[rebase]
+    autoSquash = true
+    autoStash = true
+    updateRefs = true
+[merge]
+    conflictstyle = zdiff3
+[push]
+    default = simple
+    autoSetupRemote = true
+    followTags = true

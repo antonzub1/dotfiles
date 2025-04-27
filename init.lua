@@ -1,5 +1,6 @@
 -- Set filetype detection off
 vim.opt.filetype = 'off'
+--
 -- Disable terminal color support to 256 colors
 vim.opt.termguicolors = false
 
@@ -56,10 +57,6 @@ vim.g.seoul256_sgrb = 0
 vim.g.seoul256_background = 237
 
 
--- Airline configuration
-vim.g.airline_powerline_fonts = 1
-vim.g.airline_theme = 'bubblegum'
-
 -- Testing configuration
 vim.g.test_strategy = 'neovim'
 vim.g.test_neovim_start_normal = 1
@@ -113,7 +110,6 @@ vim.api.nvim_set_keymap('n', '<A-j>', '<C-w>j', { noremap = true })
 vim.api.nvim_set_keymap('n', '<A-k>', '<C-w>k', { noremap = true })
 vim.api.nvim_set_keymap('n', '<A-l>', '<C-w>l', { noremap = true })
 
-
 -- Mappings for testing
 vim.api.nvim_set_keymap('n', '<silent> t<C-n>', ':TestNearest<CR>', { noremap = true })
 vim.api.nvim_set_keymap('n', '<silent> t<C-f>', ':TestFile<CR>', { noremap = true })
@@ -126,8 +122,12 @@ vim.api.nvim_set_keymap('n', '<C-f>', ':Ag<CR>', { noremap = true })
 vim.api.nvim_set_keymap('n', '<C-P>', ':CtrlP<CR>', { noremap = true })
 vim.api.nvim_set_keymap('n', '<C-n>', ':CtrlP<CR>', { noremap = true })
 vim.api.nvim_set_keymap('n', '<C-b>', ':Buffers<CR>', { noremap = true })
+
+-- Mappings for Choosewin
 vim.api.nvim_set_keymap('n', '-', '<Plug>(choosewin)', {})
 
+-- Mappings for Outline
+vim.api.nvim_set_keymap('n', '<leader>o', '<cmd>Outline<CR>', { noremap = true })
 
 vim.cmd("command! -bang -nargs=* Ag call fzf#vim#ag(" ..
             "<q-args>," ..
@@ -147,8 +147,7 @@ Plug ('nvim-lua/plenary.nvim')
 Plug ('nvim-telescope/telescope.nvim')
 
 Plug ('scrooloose/nerdtree')
-Plug ('vim-airline/vim-airline')
-Plug ('vim-airline/vim-airline-themes')
+Plug ('antonzub1/lualine.nvim')
 Plug ('Xuyuanp/nerdtree-git-plugin')
 Plug ('easymotion/vim-easymotion')
 Plug ('tpope/vim-repeat')
@@ -175,6 +174,7 @@ Plug ('junegunn/goyo.vim')
 Plug ('junegunn/seoul256.vim')
 Plug ('junegunn/fzf', { ['do'] =  './install --bin' } )
 Plug ('junegunn/fzf.vim')
+Plug ('hedyhli/outline.nvim')
 
 -- LSP plugins
 Plug ('neovim/nvim-lspconfig')
@@ -183,7 +183,6 @@ Plug ('hrsh7th/cmp-buffer')
 Plug ('hrsh7th/cmp-path')
 Plug ('hrsh7th/cmp-cmdline')
 Plug ('hrsh7th/nvim-cmp')
--- Plug ('mrcjkb/rustaceanvim', { ['tag'] = '4.11.0' } )
 
 Plug ('stevearc/overseer.nvim')
 
@@ -204,6 +203,9 @@ local cmp_nvim_lsp = require('cmp_nvim_lsp')
 local luasnip = require('luasnip')
 
 require('overseer').setup()
+require('lualine').setup {
+    options = { theme = "bubblegum" }
+}
 
 cmp.setup {
   formatting = {
@@ -338,7 +340,6 @@ vim.diagnostic.config({
 
 vim.o.updatetime = 250
 vim.cmd [[autocmd! ColorScheme * highlight FloatBorder guifg=white guibg=#1f2335]]
--- vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
 vim.api.nvim_create_autocmd({ "CursorHold" }, {
   group = vim.api.nvim_create_augroup("float_diagnostic_cursor", { clear = true }),
   callback = function ()
@@ -347,8 +348,6 @@ vim.api.nvim_create_autocmd({ "CursorHold" }, {
 })
 
 local on_attach = function(client, bufnr)
-
-
   local opts = { noremap = true }
 
   vim.api.nvim_set_keymap('n', '<Leader>gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
@@ -388,8 +387,11 @@ vim.keymap.set({"i"}, "<C-K>", function() ls.expand() end, {silent = true})
 vim.keymap.set({"i", "s"}, "<C-L>", function() ls.jump( 1) end, {silent = true})
 vim.keymap.set({"i", "s"}, "<C-J>", function() ls.jump(-1) end, {silent = true})
 
+
 vim.keymap.set({"i", "s"}, "<C-E>", function()
 	if ls.choice_active() then
 		ls.change_choice(1)
 	end
 end, {silent = true})
+
+require("outline").setup({})

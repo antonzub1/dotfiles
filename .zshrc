@@ -105,7 +105,7 @@ POWERLEVEL9K_VCS_MODIFIED_BACKGROUND='208'
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 [ -f /usr/share/nvm/init-nvm.sh ] && source /usr/share/nvm/init-nvm.sh
-[ -x $(which kubectl) ] && source <(kubectl completion zsh)
-[ -x $(which docker) ] && source <(docker completion zsh)
-[ -x $(which k6) ] && source <(k6 completion zsh)
-
+[ -x "$(which kubectl)" ] && source <(kubectl completion zsh)
+[ -x "$(which docker)" ] && source <(docker completion zsh)
+[ -x "$(which k6)" ] && source <(k6 completion zsh)
+[ -s $HOME/.rvm/scripts/rvm ] && source $HOME/.rvm/scripts/rvm

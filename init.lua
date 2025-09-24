@@ -120,7 +120,7 @@ vim.api.nvim_set_keymap('n', '<silent> t<C-g>', ':TestVisit<CR>', { noremap = tr
 -- Mappings for Ag and Ctrlp
 vim.api.nvim_set_keymap('n', '<C-f>', ':Ag<CR>', { noremap = true })
 vim.api.nvim_set_keymap('n', '<C-P>', ':CtrlP<CR>', { noremap = true })
-vim.api.nvim_set_keymap('n', '<C-n>', ':CtrlP<CR>', { noremap = true })
+vim.api.nvim_set_keymap('n', '<C-n>', ':NERDTreeToggle<CR>', { noremap = true })
 vim.api.nvim_set_keymap('n', '<C-b>', ':Buffers<CR>', { noremap = true })
 
 -- Mappings for Choosewin
@@ -146,7 +146,6 @@ Plug ('nvim-treesitter/nvim-treesitter', { ['do'] = ':TSUpdate' })
 Plug ('nvim-lua/plenary.nvim')
 Plug ('nvim-telescope/telescope.nvim')
 
-Plug ('scrooloose/nerdtree')
 Plug ('antonzub1/lualine.nvim')
 Plug ('Xuyuanp/nerdtree-git-plugin')
 Plug ('easymotion/vim-easymotion')
@@ -175,6 +174,7 @@ Plug ('junegunn/seoul256.vim')
 Plug ('junegunn/fzf', { ['do'] =  './install --bin' } )
 Plug ('junegunn/fzf.vim')
 Plug ('hedyhli/outline.nvim')
+Plug ('preservim/nerdtree')
 
 -- LSP plugins
 Plug ('neovim/nvim-lspconfig')
@@ -185,6 +185,12 @@ Plug ('hrsh7th/cmp-cmdline')
 Plug ('hrsh7th/nvim-cmp')
 
 Plug ('stevearc/overseer.nvim')
+
+-- Debugging
+Plug ('mfussenegger/nvim-dap')
+Plug ('mfussenegger/nvim-dap-python')
+Plug ('nvim-neotest/nvim-nio')
+Plug ('rcarriga/nvim-dap-ui')
 
 -- For vsnip users.
 Plug ('hrsh7th/cmp-vsnip')
@@ -197,7 +203,7 @@ vim.call('plug#end')
 
 vim.o.completeopt = 'menu,menuone,noselect'
 
-local nvim_lsp = require('lspconfig')
+-- local nvim_lsp = require("lsp_config")
 local cmp = require('cmp')
 local cmp_nvim_lsp = require('cmp_nvim_lsp')
 local luasnip = require('luasnip')
@@ -223,7 +229,8 @@ cmp.setup {
       item.menu = menu_icon[entry.source.name]
 
       -- Set the fixed width of the completion menu to 60 characters.
-      -- fixed_width = 20
+      -- fixed_width = 60
+      width_percent = 0.2
 
       -- Set 'fixed_width' to false if not provided.
       fixed_width = fixed_width or false
@@ -242,7 +249,7 @@ cmp.setup {
       -- Set the max content width based on either: 'fixed_width'
       -- or a percentage of the window width, in this case 20%.
       -- We subtract 10 from 'fixed_width' to leave room for 'kind' fields.
-      local max_content_width = fixed_width and fixed_width - 10 or math.floor(win_width * 0.2)
+      local max_content_width = fixed_width and fixed_width - 10 or math.floor(win_width * width_percent)
 
       -- Truncate the completion entry text if it's longer than the
       -- max content width. We subtract 3 from the max content width
@@ -371,13 +378,57 @@ local servers = {
 
 for _, server in pairs(servers) do
   local capabilities = cmp_nvim_lsp.default_capabilities (vim.lsp.protocol.make_client_capabilities())
-  nvim_lsp[server].setup {
-    capabilities = capabilities,
-    on_attach = on_attach,
-  }
+  vim.lsp.config(server, {
+      capabilities = capabilities,
+      on_attach = on_attach,
+  })
+  vim.lsp.enable(server, {})
 
 end
 
+-- DAP Configuration
+local dap = require("dap")
+dap.adapters["rust-gdb"] = {
+  type = "executable",
+  command = "rust-gdb",
+  args = { "--interpreter=dap", "--eval-command", "set print pretty on" }
+}
+dap.configurations.rust = {
+  {
+    name = "Launch",
+    type = "rust-gdb",
+    request = "launch",
+    program = function()
+      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+    end,
+    args = {}, -- provide arguments if needed
+    cwd = "${workspaceFolder}",
+    stopAtBeginningOfMainSubprogram = false,
+  },
+  {
+    name = "Select and attach to process",
+    type = "rust-gdb",
+    request = "attach",
+    program = function()
+      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+    end,
+    pid = function()
+      local name = vim.fn.input('Executable name (filter): ')
+      return require("dap.utils").pick_process({ filter = name })
+    end,
+    cwd = "${workspaceFolder}"
+  },
+  {
+    name = "Attach to gdbserver :1234",
+    type = "rust-gdb",
+    request = "attach",
+    target = "localhost:1234",
+    program = function()
+      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+    end,
+    cwd = '${workspaceFolder}'
+  }
+}
 
 vim.cmd('colorscheme seoul256')
 
@@ -395,3 +446,38 @@ vim.keymap.set({"i", "s"}, "<C-E>", function()
 end, {silent = true})
 
 require("outline").setup({})
+require("dap-python").setup("uv")
+
+
+local dapui = require("dapui")
+-- nvim dap mappings
+vim.keymap.set('n', '<Leader>dt', function() dap.toggle_breakpoint() end)
+vim.keymap.set('n', '<Leader>dc', function() dap.continue() end)
+vim.keymap.set('n', '<Leader>do', function() dap.step_over() end)
+vim.keymap.set('n', '<Leader>di', function() dap.step_into() end)
+vim.keymap.set('n', '<Leader>du', function() dap.step_out() end)
+vim.keymap.set('n', '<Leader>dq', function() dap.quit() dapui.close() end)
+vim.keymap.set('n', '<Leader>db', function() dap.list_breakpoints() end)
+
+dapui.setup()
+
+dap.listeners.before.attach.dapui_config = function()
+	dapui.open()
+end
+dap.listeners.before.launch.dapui_config = function()
+	dapui.open()
+end
+dap.listeners.before.event_terminated.dapui_config = function()
+	dapui.close()
+end
+dap.listeners.before.event_exited.dapui_config = function()
+	dapui.close()
+end
+
+-- close Dap UI with :DapCloseUI
+vim.api.nvim_create_user_command("DapCloseUI", function()
+    require("dapui").close()
+end, {})
+
+-- use <Alt-e> to eval expressions
+vim.keymap.set({ 'n', 'v' }, '<M-e>', function() require('dapui').eval() end)

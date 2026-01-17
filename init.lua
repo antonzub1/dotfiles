@@ -487,11 +487,19 @@ end, {})
 -- use <Alt-e> to eval expressions
 vim.keymap.set({ 'n', 'v' }, '<M-e>', function() require('dapui').eval() end)
 
-require('nvim-treesitter.configs').setup({
-    highlight = {
-        enable = true
-    }
-})
+require('nvim-treesitter').setup {
+  -- Directory to install parsers and queries to (prepended to `runtimepath` to have priority)
+  install_dir = vim.fn.stdpath('data') .. '/site'
+}
+
+require('nvim-treesitter').install {
+  'rust',
+  'typescript',
+  'python',
+  'cpp',
+  'c',
+  'yaml',
+}
 
 
 require("claude-code").setup({

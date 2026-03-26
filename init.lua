@@ -48,8 +48,11 @@ vim.opt.expandtab = true
 -- Enable syntax highlighting
 vim.cmd('syntax on')
 
+
+vim.g.seoul256_contrast = true
+
 -- Set background to dark
-vim.g.background = 'light'
+vim.g.background = 'dark'
 
 vim.g.seoul256_sgrb = 0
 
@@ -142,6 +145,7 @@ vim.cmd("command! -bang -nargs=* Buffers call fzf#vim#buffers(" ..
 local Plug = vim.fn['plug#']
 vim.call('plug#begin', '~/.local/share/nvim/plugged')
 Plug ('nvim-treesitter/nvim-treesitter', { ['do'] = ':TSUpdate' })
+Plug ('nvim-treesitter/nvim-treesitter-context')
 
 Plug ('nvim-lua/plenary.nvim')
 Plug ('nvim-telescope/telescope.nvim')
@@ -185,6 +189,7 @@ Plug ('hrsh7th/cmp-cmdline')
 Plug ('hrsh7th/nvim-cmp')
 
 Plug ('stevearc/overseer.nvim')
+Plug ('mrcjkb/rustaceanvim')
 
 -- Debugging
 Plug ('mfussenegger/nvim-dap')
@@ -210,7 +215,7 @@ local cmp = require('cmp')
 local cmp_nvim_lsp = require('cmp_nvim_lsp')
 local luasnip = require('luasnip')
 
-require('overseer').setup()
+require('overseer').setup({})
 require('lualine').setup {
     options = { theme = "bubblegum" }
 }
@@ -320,11 +325,11 @@ cmp.setup.cmdline({ '/', '?' }, {
 
 -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
 cmp.setup.cmdline(':', {
+  mapping = cmp.mapping.preset.cmdline(),
   sources = cmp.config.sources({
-      mapping = cmp.mapping.preset.cmdline(),
-      name = "path",
+    { name = 'path' },
   }, {
-    { name = 'cmdline' }
+    { name = 'cmdline' },
   })
 })
 
@@ -374,7 +379,7 @@ local servers = {
     "gopls",
     "lua_ls",
     "pylsp",
-    "rust_analyzer",
+    -- "rust_analyzer",
     "terraformls",
     "ts_ls",
 }
@@ -388,6 +393,14 @@ for _, server in pairs(servers) do
   vim.lsp.enable(server, {})
 
 end
+
+vim.g.rustaceanvim = {
+    server = {
+        on_attach = on_attach,
+        -- cmd = { vim.fn.expand("~/.cargo/bin/lspmux"), "client" },
+        cmd = { vim.fn.expand("rust-analyzer") },
+    }
+}
 
 -- DAP Configuration
 local dap = require("dap")
@@ -492,14 +505,15 @@ require('nvim-treesitter').setup {
   install_dir = vim.fn.stdpath('data') .. '/site'
 }
 
-require('nvim-treesitter').install {
-  'rust',
-  'typescript',
-  'python',
-  'cpp',
-  'c',
-  'yaml',
-}
+require('nvim-treesitter').install({
+    'rust',
+    'ecma',
+    'typescript',
+    'python',
+    'cpp',
+    'c',
+    'yaml',
+}):wait(6000000)
 
 
 require("claude-code").setup({

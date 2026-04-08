@@ -375,23 +375,31 @@ local on_attach = function(client, bufnr)
 end
 
 local servers = {
-    "ccls",
-    "gopls",
-    "lua_ls",
-    "pylsp",
-    -- "rust_analyzer",
-    "terraformls",
-    "ts_ls",
+    { "ccls", {} },
+    { "gopls", {} },
+    { "lua_ls", {} },
+    -- { "pylsp", {} },
+    -- { "rust_analyzer", {} },
+    { "terraformls", {} },
+    { "ts_ls", {} },
+    { "zubanls", {
+        name = "ZubanLS",
+        cmd = { "zuban", "server" },
+        root_markers = { "pyproject.toml", ".git" },
+        filetypes = { "python" },
+    }},
+}
+
+local default_config = {
+    capabilities = cmp_nvim_lsp.default_capabilities(vim.lsp.protocol.make_client_capabilities()),
+    on_attach = on_attach,
 }
 
 for _, server in pairs(servers) do
-  local capabilities = cmp_nvim_lsp.default_capabilities (vim.lsp.protocol.make_client_capabilities())
-  vim.lsp.config(server, {
-      capabilities = capabilities,
-      on_attach = on_attach,
-  })
-  vim.lsp.enable(server, {})
-
+  local name = server[1]
+  local overrides = server[2] or {}
+  vim.lsp.config(name, vim.tbl_deep_extend("force", default_config, overrides))
+  vim.lsp.enable(name)
 end
 
 vim.g.rustaceanvim = {

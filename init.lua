@@ -1,5 +1,5 @@
--- Set filetype detection off
-vim.opt.filetype = 'off'
+-- Enable filetype detection
+vim.cmd('filetype on')
 --
 -- Disable terminal color support to 256 colors
 vim.opt.termguicolors = false
@@ -132,79 +132,106 @@ vim.api.nvim_set_keymap('n', '-', '<Plug>(choosewin)', {})
 -- Mappings for Outline
 vim.api.nvim_set_keymap('n', '<leader>o', '<cmd>Outline<CR>', { noremap = true })
 
-vim.cmd("command! -bang -nargs=* Ag call fzf#vim#ag(" ..
-            "<q-args>," ..
-            "fzf#vim#with_preview({'options': ['--delimiter', 'nth 4..', '--info=inline', '--layout=reverse']}), <bang>0)")
-vim.cmd("command! -bang -nargs=* CtrlP call fzf#vim#files(" ..
-            "<q-args>," ..
-            "fzf#vim#with_preview({'options': ['--layout=reverse', '--info=inline']}), <bang>0)")
-vim.cmd("command! -bang -nargs=* Buffers call fzf#vim#buffers(" ..
-            "<q-args>," ..
-            "fzf#vim#with_preview({'options': ['--layout=reverse', '--info=inline']}), <bang>0)")
+
+-- Search in files
+vim.api.nvim_create_user_command('Ag', function(opts)
+    vim.fn['fzf#vim#ag'](
+        opts.args,
+        vim.fn['fzf#vim#with_preview']({
+            options = { '--delimiter', 'nth 4..', '--info=inline',
+                '--layout=reverse' },
+        }),
+        opts.bang and 1 or 0
+    )
+end, { bang = true, nargs = '*' })
+
+-- Search files
+vim.api.nvim_create_user_command('CtrlP', function(opts)
+    vim.fn['fzf#vim#files'](
+        opts.args,
+        vim.fn['fzf#vim#with_preview']({
+            options = {
+                '--layout=reverse', '--info=inline' }
+        }),
+        opts.bang and 1 or 0
+    )
+end, { bang = true, nargs = '*' })
+
+-- Search in open buffers
+vim.api.nvim_create_user_command('Buffers', function(opts)
+    vim.fn['fzf#vim#buffers'](
+        opts.args,
+        vim.fn['fzf#vim#with_preview']({
+            options = {
+                '--layout=reverse', '--info=inline' }
+        }),
+        opts.bang and 1 or 0
+    )
+end, { bang = true, nargs = '*' })
 
 local Plug = vim.fn['plug#']
 vim.call('plug#begin', '~/.local/share/nvim/plugged')
-Plug ('nvim-treesitter/nvim-treesitter', { ['do'] = ':TSUpdate' })
-Plug ('nvim-treesitter/nvim-treesitter-context')
+Plug('nvim-treesitter/nvim-treesitter', { ['do'] = ':TSUpdate' })
+Plug('nvim-treesitter/nvim-treesitter-context')
 
-Plug ('nvim-lua/plenary.nvim')
-Plug ('nvim-telescope/telescope.nvim')
+Plug('nvim-lua/plenary.nvim')
+Plug('nvim-telescope/telescope.nvim')
 
-Plug ('antonzub1/lualine.nvim')
-Plug ('Xuyuanp/nerdtree-git-plugin')
-Plug ('easymotion/vim-easymotion')
-Plug ('tpope/vim-repeat')
-Plug ('tpope/vim-speeddating')
-Plug ('tpope/vim-surround')
-Plug ('tpope/vim-commentary')
-Plug ('tpope/vim-fugitive')
-Plug ('AndrewRadev/splitjoin.vim')
-Plug ('godlygeek/tabular')
-Plug ('Yggdroot/indentLine')
-Plug ('jiangmiao/auto-pairs')
-Plug ('majutsushi/tagbar')
-Plug ('powerman/vim-plugin-ruscmd')
-Plug ('vim-scripts/indentpython.vim')
-Plug ('pgdouyon/vim-evanesco')
-Plug ('vim-test/vim-test')
-Plug ('t9md/vim-choosewin')
+Plug('antonzub1/lualine.nvim')
+Plug('Xuyuanp/nerdtree-git-plugin')
+Plug('easymotion/vim-easymotion')
+Plug('tpope/vim-repeat')
+Plug('tpope/vim-speeddating')
+Plug('tpope/vim-surround')
+Plug('tpope/vim-commentary')
+Plug('tpope/vim-fugitive')
+Plug('AndrewRadev/splitjoin.vim')
+Plug('godlygeek/tabular')
+Plug('Yggdroot/indentLine')
+Plug('jiangmiao/auto-pairs')
+Plug('majutsushi/tagbar')
+Plug('powerman/vim-plugin-ruscmd')
+Plug('vim-scripts/indentpython.vim')
+Plug('pgdouyon/vim-evanesco')
+Plug('vim-test/vim-test')
+Plug('t9md/vim-choosewin')
 
-Plug ('christoomey/vim-tmux-navigator')
-Plug ('michaelb/sniprun', { ['do'] = 'sh install.sh' })
+Plug('christoomey/vim-tmux-navigator')
+Plug('michaelb/sniprun', { ['do'] = 'sh install.sh' })
 
 -- Appearance, tools
-Plug ('junegunn/goyo.vim')
-Plug ('junegunn/seoul256.vim')
-Plug ('junegunn/fzf', { ['do'] =  './install --bin' } )
-Plug ('junegunn/fzf.vim')
-Plug ('hedyhli/outline.nvim')
-Plug ('preservim/nerdtree')
+Plug('junegunn/goyo.vim')
+Plug('junegunn/seoul256.vim')
+Plug('junegunn/fzf', { ['do'] = './install --bin' })
+Plug('junegunn/fzf.vim')
+Plug('hedyhli/outline.nvim')
+Plug('preservim/nerdtree')
 
 -- LSP plugins
-Plug ('neovim/nvim-lspconfig')
-Plug ('hrsh7th/cmp-nvim-lsp')
-Plug ('hrsh7th/cmp-buffer')
-Plug ('hrsh7th/cmp-path')
-Plug ('hrsh7th/cmp-cmdline')
-Plug ('hrsh7th/nvim-cmp')
+Plug('neovim/nvim-lspconfig')
+Plug('hrsh7th/cmp-nvim-lsp')
+Plug('hrsh7th/cmp-buffer')
+Plug('hrsh7th/cmp-path')
+Plug('hrsh7th/cmp-cmdline')
+Plug('hrsh7th/nvim-cmp')
 
-Plug ('stevearc/overseer.nvim')
-Plug ('mrcjkb/rustaceanvim')
+Plug('stevearc/overseer.nvim')
+Plug('mrcjkb/rustaceanvim')
 
 -- Debugging
-Plug ('mfussenegger/nvim-dap')
-Plug ('mfussenegger/nvim-dap-python')
-Plug ('nvim-neotest/nvim-nio')
-Plug ('rcarriga/nvim-dap-ui')
+Plug('mfussenegger/nvim-dap')
+Plug('mfussenegger/nvim-dap-python')
+Plug('nvim-neotest/nvim-nio')
+Plug('rcarriga/nvim-dap-ui')
 
 -- For vsnip users.
-Plug ('hrsh7th/cmp-vsnip')
-Plug ('hrsh7th/vim-vsnip')
-Plug ('L3MON4D3/LuaSnip')
-Plug ('saadparwaiz1/cmp_luasnip')
+Plug('hrsh7th/cmp-vsnip')
+Plug('hrsh7th/vim-vsnip')
+Plug('L3MON4D3/LuaSnip')
+Plug('saadparwaiz1/cmp_luasnip')
 
 -- AI
-Plug ('greggh/claude-code.nvim')
+Plug('greggh/claude-code.nvim')
 
 vim.call('plug#end')
 
@@ -221,185 +248,213 @@ require('lualine').setup {
 }
 
 cmp.setup {
-  formatting = {
-    fields = { "abbr", "menu", "kind" },
-    format = function(entry, item)
-      -- Define menu shorthand for different completion sources.
-      local menu_icon = {
-        nvim_lsp = "[LSP]",
-        nvim_lua = "[LUA]",
-        luasnip  = "[SNIP]",
-        buffer   = "[BUFF]",
-        path     = "[PATH]",
-      }
-          -- Set the menu "icon" to the shorthand for each completion source.
-      item.menu = menu_icon[entry.source.name]
+    formatting = {
+        fields = { "abbr", "menu", "kind" },
+        format = function(entry, item)
+            -- Define menu shorthand for different completion sources.
+            local menu_icon = {
+                nvim_lsp = "[LSP]",
+                nvim_lua = "[LUA]",
+                luasnip  = "[SNIP]",
+                buffer   = "[BUFF]",
+                path     = "[PATH]",
+            }
+            -- Set the menu "icon" to the shorthand for each completion source.
+            item.menu = menu_icon[entry.source.name]
 
-      -- Set the fixed width of the completion menu to 60 characters.
-      -- fixed_width = 60
-      width_percent = 0.2
+            -- Set the fixed width of the completion menu to 60 characters.
+            -- fixed_width = 60
+            width_percent = 0.2
 
-      -- Set 'fixed_width' to false if not provided.
-      fixed_width = fixed_width or false
+            -- Set 'fixed_width' to false if not provided.
+            fixed_width = fixed_width or false
 
-      -- Get the completion entry text shown in the completion window.
-      local content = item.abbr
+            -- Get the completion entry text shown in the completion window.
+            local content = item.abbr
 
-      -- Set the fixed completion window width.
-      if fixed_width then
-          vim.o.pumwidth = fixed_width
-      end
+            -- Set the fixed completion window width.
+            if fixed_width then
+                vim.o.pumwidth = fixed_width
+            end
 
-      -- Get the width of the current window.
-      local win_width = vim.api.nvim_win_get_width(0)
+            -- Get the width of the current window.
+            local win_width = vim.api.nvim_win_get_width(0)
 
-      -- Set the max content width based on either: 'fixed_width'
-      -- or a percentage of the window width, in this case 20%.
-      -- We subtract 10 from 'fixed_width' to leave room for 'kind' fields.
-      local max_content_width = fixed_width and fixed_width - 10 or math.floor(win_width * width_percent)
+            -- Set the max content width based on either: 'fixed_width'
+            -- or a percentage of the window width, in this case 20%.
+            -- We subtract 10 from 'fixed_width' to leave room for 'kind' fields.
+            local max_content_width = fixed_width and fixed_width - 10 or math.floor(win_width * width_percent)
 
-      -- Truncate the completion entry text if it's longer than the
-      -- max content width. We subtract 3 from the max content width
-      -- to account for the "..." that will be appended to it.
-      if #content > max_content_width then
-        item.abbr = vim.fn.strcharpart(content, 0, max_content_width - 3) .. "..."
-      else
-        item.abbr = content .. (" "):rep(max_content_width - #content)
-        end
-        return item
-      end,
-  },
-  window = {
-    completion = {
-      winhighlight = "Normal:Pmenu,FloatBorder:Pmenu,CursorLine:CmpItemKindMethod,Search:None",
-      },
-  },
-  snippet = {
-    expand = function(args)
-      luasnip.lsp_expand(args.body)
-    end,
-  },
-  mapping = {
-    ['<C-p>'] = cmp.mapping.select_prev_item(),
-    ['<C-n>'] = cmp.mapping.select_next_item(),
-    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-    ['<C-f>'] = cmp.mapping.scroll_docs(4),
-    ['<C-Space>'] = cmp.mapping.complete(),
-    ['<C-e>'] = cmp.mapping.close(),
-    ['<CR>'] = cmp.mapping.confirm {
-      behavior = cmp.ConfirmBehavior.Replace,
-      select = true,
+            -- Truncate the completion entry text if it's longer than the
+            -- max content width. We subtract 3 from the max content width
+            -- to account for the "..." that will be appended to it.
+            if #content > max_content_width then
+                item.abbr = vim.fn.strcharpart(content, 0, max_content_width - 3) .. "..."
+            else
+                item.abbr = content .. (" "):rep(max_content_width - #content)
+            end
+            return item
+        end,
     },
-    ['<Tab>'] = function(fallback)
-      if luasnip.expand_or_jumpable() then
-        luasnip.expand_or_jump()
-      elseif cmp.visible() then
-        cmp.select_next_item()
-      else
-        fallback()
-      end
-    end,
-    ['<S-Tab>'] = function(fallback)
-      if cmp.visible() then
-        cmp.select_prev_item()
-      elseif luasnip.jumpable(-1) then
-        luasnip.jump(-1)
-      else
-        fallback()
-      end
-    end,
-  },
-  sources = {
-    { name = 'nvim_lsp' },
-    { name = 'luasnip' },
-  },
+    window = {
+        completion = {
+            winhighlight = "Normal:Pmenu,FloatBorder:Pmenu,CursorLine:CmpItemKindMethod,Search:None",
+        },
+    },
+    snippet = {
+        expand = function(args)
+            luasnip.lsp_expand(args.body)
+        end,
+    },
+    mapping = {
+        ['<C-p>'] = cmp.mapping.select_prev_item(),
+        ['<C-n>'] = cmp.mapping.select_next_item(),
+        ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+        ['<C-f>'] = cmp.mapping.scroll_docs(4),
+        ['<C-Space>'] = cmp.mapping.complete(),
+        ['<C-e>'] = cmp.mapping.close(),
+        ['<CR>'] = cmp.mapping.confirm {
+            behavior = cmp.ConfirmBehavior.Replace,
+            select = true,
+        },
+        ['<Tab>'] = function(fallback)
+            if luasnip.expand_or_jumpable() then
+                luasnip.expand_or_jump()
+            elseif cmp.visible() then
+                cmp.select_next_item()
+            else
+                fallback()
+            end
+        end,
+        ['<S-Tab>'] = function(fallback)
+            if cmp.visible() then
+                cmp.select_prev_item()
+            elseif luasnip.jumpable(-1) then
+                luasnip.jump(-1)
+            else
+                fallback()
+            end
+        end,
+    },
+    sources = {
+        { name = 'nvim_lsp' },
+        { name = 'luasnip' },
+    },
 }
 
 -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
 cmp.setup.cmdline({ '/', '?' }, {
-  mapping = cmp.mapping.preset.cmdline(),
-  sources = {
-    { name = 'buffer' }
-  }
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = {
+        { name = 'buffer' }
+    }
 })
 
 -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
 cmp.setup.cmdline(':', {
-  mapping = cmp.mapping.preset.cmdline(),
-  sources = cmp.config.sources({
-    { name = 'path' },
-  }, {
-    { name = 'cmdline' },
-  })
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = cmp.config.sources({
+        { name = 'path' },
+    }, {
+        { name = 'cmdline' },
+    })
 })
 
-
-vim.fn.sign_define("DiagnosticSignError", {text = "", texthl = "DiagnosticSignError", linehl="", numhl="DiagnosticSignError"})
-vim.fn.sign_define("DiagnosticSignWarn", {text = "", texthl = "DiagnosticSignWarn", linehl="", numhl="DiagnosticSignWarn"})
-vim.fn.sign_define("DiagnosticSignInformation", {text = "", texthl = "DiagnosticSignInformation", linehl="", numhl="DiagnosticSignInformation"})
-vim.fn.sign_define("DiagnosticSignHint", {text = "", texthl = "DiagnosticSignHint", linehl="", numhl="DiagnosticSignHint"})
 
 vim.diagnostic.config({
-  underline = true,
-  virtual_text = false,
-  float = {
-    style = "minimal",
-    border = "single",
-    source = "always",
-    update_in_insert = false,
-    severity_sort = true,
-  },
+    underline = true,
+    virtual_text = false,
+    signs = {
+        text = {
+            [vim.diagnostic.severity.ERROR] = "",
+            [vim.diagnostic.severity.WARN] = "",
+            [vim.diagnostic.severity.INFO] = "",
+            [vim.diagnostic.severity.HINT] = "",
+        },
+        numhl = {
+            [vim.diagnostic.severity.ERROR] = "DiagnosticSignError",
+            [vim.diagnostic.severity.WARN] = "DiagnosticSignWarn",
+            [vim.diagnostic.severity.INFO] = "DiagnosticSignInfo",
+            [vim.diagnostic.severity.HINT] = "DiagnosticSignHint",
+        },
+    },
+    float = {
+        style = "minimal",
+        border = "single",
+        source = "always",
+        update_in_insert = false,
+        severity_sort = true,
+    },
 })
 
-
 vim.o.updatetime = 250
-vim.cmd [[autocmd! ColorScheme * highlight FloatBorder guifg=white guibg=#1f2335]]
+
+vim.api.nvim_create_autocmd("ColorScheme", {
+    pattern = "*",
+    callback = function()
+        vim.api.nvim_set_hl(0, "FloatBorder", { fg = "white", bg = "#1f2335" })
+    end,
+})
 vim.api.nvim_create_autocmd({ "CursorHold" }, {
-  group = vim.api.nvim_create_augroup("float_diagnostic_cursor", { clear = true }),
-  callback = function ()
-    vim.diagnostic.open_float(nil, {focus=false, scope="cursor", max_width=80})
-  end
+    group = vim.api.nvim_create_augroup("float_diagnostic_cursor", { clear = true }),
+    callback = function()
+        vim.diagnostic.open_float(nil, { focus = false, scope = "cursor", max_width = 80 })
+    end
 })
 
 local on_attach = function(client, bufnr)
-  local opts = { noremap = true }
+    local opts = { noremap = true }
 
-  vim.api.nvim_set_keymap('n', '<Leader>gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  vim.api.nvim_set_keymap('n', '<Leader>gt', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-  vim.api.nvim_set_keymap('n', '<Leader>gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-  vim.api.nvim_set_keymap('n', '<Leader>gu', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  vim.api.nvim_set_keymap('n', '<Leader>gr', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-  vim.api.nvim_set_keymap('n', '<Leader>gh', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+    vim.api.nvim_set_keymap('n', '<Leader>gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+    vim.api.nvim_set_keymap('n', '<Leader>gt', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+    vim.api.nvim_set_keymap('n', '<Leader>gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+    vim.api.nvim_set_keymap('n', '<Leader>gu', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+    vim.api.nvim_set_keymap('n', '<Leader>gr', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+    vim.api.nvim_set_keymap('n', '<Leader>gh', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
 
-  print("LSP started.");
+    print("LSP started.");
 end
 
+
 local servers = {
-    { "ccls", {} },
+    { "ccls",  {} },
     { "gopls", {} },
-    { "lua_ls", {} },
+    { "lua_ls", {
+        filetypes = { "lua" },
+        settings = {
+            Lua = {
+                runtime = { version = "LuaJIT" },
+                diagnostics = { globals = { "vim" } },
+                workspace = {
+                    library = vim.api.nvim_get_runtime_file("", true),
+                    checkThirdParty = false,
+                },
+            },
+        },
+    } },
     -- { "pylsp", {} },
     -- { "rust_analyzer", {} },
     { "terraformls", {} },
-    { "ts_ls", {} },
+    { "ts_ls",       {} },
     { "zubanls", {
         name = "ZubanLS",
         cmd = { "zuban", "server" },
         root_markers = { "pyproject.toml", ".git" },
         filetypes = { "python" },
-    }},
+    } },
 }
 
 local default_config = {
     capabilities = cmp_nvim_lsp.default_capabilities(vim.lsp.protocol.make_client_capabilities()),
     on_attach = on_attach,
 }
+vim.lsp.enable('gitlab_duo', false)
 
 for _, server in pairs(servers) do
-  local name = server[1]
-  local overrides = server[2] or {}
-  vim.lsp.config(name, vim.tbl_deep_extend("force", default_config, overrides))
-  vim.lsp.enable(name)
+    local name = server[1]
+    local overrides = server[2] or {}
+    vim.lsp.config(name, vim.tbl_deep_extend("force", default_config, overrides))
+    vim.lsp.enable(name)
 end
 
 vim.g.rustaceanvim = {
@@ -413,61 +468,61 @@ vim.g.rustaceanvim = {
 -- DAP Configuration
 local dap = require("dap")
 dap.adapters["rust-gdb"] = {
-  type = "executable",
-  command = "rust-gdb",
-  args = { "--interpreter=dap", "--eval-command", "set print pretty on" }
+    type = "executable",
+    command = "rust-gdb",
+    args = { "--interpreter=dap", "--eval-command", "set print pretty on" }
 }
 dap.configurations.rust = {
-  {
-    name = "Launch",
-    type = "rust-gdb",
-    request = "launch",
-    program = function()
-      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
-    end,
-    args = {}, -- provide arguments if needed
-    cwd = "${workspaceFolder}",
-    stopAtBeginningOfMainSubprogram = false,
-  },
-  {
-    name = "Select and attach to process",
-    type = "rust-gdb",
-    request = "attach",
-    program = function()
-      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
-    end,
-    pid = function()
-      local name = vim.fn.input('Executable name (filter): ')
-      return require("dap.utils").pick_process({ filter = name })
-    end,
-    cwd = "${workspaceFolder}"
-  },
-  {
-    name = "Attach to gdbserver :1234",
-    type = "rust-gdb",
-    request = "attach",
-    target = "localhost:1234",
-    program = function()
-      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
-    end,
-    cwd = '${workspaceFolder}'
-  }
+    {
+        name = "Launch",
+        type = "rust-gdb",
+        request = "launch",
+        program = function()
+            return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+        end,
+        args = {}, -- provide arguments if needed
+        cwd = "${workspaceFolder}",
+        stopAtBeginningOfMainSubprogram = false,
+    },
+    {
+        name = "Select and attach to process",
+        type = "rust-gdb",
+        request = "attach",
+        program = function()
+            return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+        end,
+        pid = function()
+            local name = vim.fn.input('Executable name (filter): ')
+            return require("dap.utils").pick_process({ filter = name })
+        end,
+        cwd = "${workspaceFolder}"
+    },
+    {
+        name = "Attach to gdbserver :1234",
+        type = "rust-gdb",
+        request = "attach",
+        target = "localhost:1234",
+        program = function()
+            return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+        end,
+        cwd = '${workspaceFolder}'
+    }
 }
 
 vim.cmd('colorscheme seoul256')
 
-vim.api.nvim_set_hl(0, 'CmpItemKind', { fg='#949494', ctermfg=248 })
+vim.api.nvim_set_hl(0, 'CmpItemKind', { fg = '#949494', ctermfg = 248 })
 
-vim.keymap.set({"i"}, "<C-K>", function() ls.expand() end, {silent = true})
-vim.keymap.set({"i", "s"}, "<C-L>", function() ls.jump( 1) end, {silent = true})
-vim.keymap.set({"i", "s"}, "<C-J>", function() ls.jump(-1) end, {silent = true})
+vim.keymap.set({ "i" }, "<C-K>", function() ls.expand() end, { silent = true })
+vim.keymap.set({ "i", "s" }, "<C-L>", function() ls.jump(1) end, { silent = true })
+vim.keymap.set({ "i", "s" }, "<C-J>", function() ls.jump(-1) end, { silent = true })
 
 
-vim.keymap.set({"i", "s"}, "<C-E>", function()
-	if ls.choice_active() then
-		ls.change_choice(1)
-	end
-end, {silent = true})
+vim.keymap.set({ "i", "s" }, "<C-E>", function()
+    if ls.choice_active() then
+        ls.change_choice(1)
+    end
+end, { silent = true })
 
 require("outline").setup({})
 local dap_python = require("dap-python")
@@ -476,28 +531,31 @@ dap_python.setup("uv")
 
 local dapui = require("dapui")
 -- nvim dap mappings
-vim.keymap.set('n', '<Leader>db',  function() dap.toggle_breakpoint() end)
-vim.keymap.set('n', '<Leader>dc',  function() dap.continue() end)
-vim.keymap.set('n', '<Leader>do',  function() dap.step_over() end)
-vim.keymap.set('n', '<Leader>di',  function() dap.step_into() end)
-vim.keymap.set('n', '<Leader>du',  function() dap.step_out() end)
-vim.keymap.set('n', '<Leader>dq',  function() dap.quit() dapui.close() end)
-vim.keymap.set('n', '<Leader>dlb',  function() dap.list_breakpoints() end)
+vim.keymap.set('n', '<Leader>db', function() dap.toggle_breakpoint() end)
+vim.keymap.set('n', '<Leader>dc', function() dap.continue() end)
+vim.keymap.set('n', '<Leader>do', function() dap.step_over() end)
+vim.keymap.set('n', '<Leader>di', function() dap.step_into() end)
+vim.keymap.set('n', '<Leader>du', function() dap.step_out() end)
+vim.keymap.set('n', '<Leader>dq', function()
+    dap.quit()
+    dapui.close()
+end)
+vim.keymap.set('n', '<Leader>dlb', function() dap.list_breakpoints() end)
 vim.keymap.set('n', '<Leader>dt', function() dap_python.test_method() end)
 
 dapui.setup()
 
 dap.listeners.before.attach.dapui_config = function()
-	dapui.open()
+    dapui.open()
 end
 dap.listeners.before.launch.dapui_config = function()
-	dapui.open()
+    dapui.open()
 end
 dap.listeners.before.event_terminated.dapui_config = function()
-	dapui.close()
+    dapui.close()
 end
 dap.listeners.before.event_exited.dapui_config = function()
-	dapui.close()
+    dapui.close()
 end
 
 -- close Dap UI with :DapCloseUI
@@ -509,8 +567,8 @@ end, {})
 vim.keymap.set({ 'n', 'v' }, '<M-e>', function() require('dapui').eval() end)
 
 require('nvim-treesitter').setup {
-  -- Directory to install parsers and queries to (prepended to `runtimepath` to have priority)
-  install_dir = vim.fn.stdpath('data') .. '/site'
+    -- Directory to install parsers and queries to (prepended to `runtimepath` to have priority)
+    install_dir = vim.fn.stdpath('data') .. '/site'
 }
 
 require('nvim-treesitter').install({
@@ -525,63 +583,63 @@ require('nvim-treesitter').install({
 
 
 require("claude-code").setup({
-  -- Terminal window settings
-  window = {
-    split_ratio = 0.3,      -- Percentage of screen for the terminal window (height for horizontal, width for vertical splits)
-    position = "vertical",  -- Position of the window: "botright", "topleft", "vertical", "float", etc.
-    enter_insert = true,    -- Whether to enter insert mode when opening Claude Code
-    hide_numbers = true,    -- Hide line numbers in the terminal window
-    hide_signcolumn = true, -- Hide the sign column in the terminal window
-    
-    -- Floating window configuration (only applies when position = "float")
-    float = {
-      width = "80%",        -- Width: number of columns or percentage string
-      height = "80%",       -- Height: number of rows or percentage string
-      row = "center",       -- Row position: number, "center", or percentage string
-      col = "center",       -- Column position: number, "center", or percentage string
-      relative = "editor",  -- Relative to: "editor" or "cursor"
-      border = "rounded",   -- Border style: "none", "single", "double", "rounded", "solid", "shadow"
-    },
-  },
-  -- File refresh settings
-  refresh = {
-    enable = true,           -- Enable file change detection
-    updatetime = 100,        -- updatetime when Claude Code is active (milliseconds)
-    timer_interval = 1000,   -- How often to check for file changes (milliseconds)
-    show_notifications = true, -- Show notification when files are reloaded
-  },
-  -- Git project settings
-  git = {
-    use_git_root = true,     -- Set CWD to git root when opening Claude Code (if in git project)
-  },
-  -- Shell-specific settings
-  shell = {
-    separator = '&&',        -- Command separator used in shell commands
-    pushd_cmd = 'pushd',     -- Command to push directory onto stack (e.g., 'pushd' for bash/zsh, 'enter' for nushell)
-    popd_cmd = 'popd',       -- Command to pop directory from stack (e.g., 'popd' for bash/zsh, 'exit' for nushell)
-  },
-  -- Command settings
-  command = "claude",        -- Command used to launch Claude Code
-  -- Command variants
-  command_variants = {
-    -- Conversation management
-    continue = "--continue", -- Resume the most recent conversation
-    resume = "--resume",     -- Display an interactive conversation picker
+    -- Terminal window settings
+    window = {
+        split_ratio = 0.3,      -- Percentage of screen for the terminal window (height for horizontal, width for vertical splits)
+        position = "vertical",  -- Position of the window: "botright", "topleft", "vertical", "float", etc.
+        enter_insert = true,    -- Whether to enter insert mode when opening Claude Code
+        hide_numbers = true,    -- Hide line numbers in the terminal window
+        hide_signcolumn = true, -- Hide the sign column in the terminal window
 
-    -- Output options
-    verbose = "--verbose",   -- Enable verbose logging with full turn-by-turn output
-  },
-  -- Keymaps
-  keymaps = {
-    toggle = {
-      normal = "<C-,>",       -- Normal mode keymap for toggling Claude Code, false to disable
-      terminal = "<C-,>",     -- Terminal mode keymap for toggling Claude Code, false to disable
-      variants = {
-        continue = "<leader>cC", -- Normal mode keymap for Claude Code with continue flag
-        verbose = "<leader>cV",  -- Normal mode keymap for Claude Code with verbose flag
-      },
+        -- Floating window configuration (only applies when position = "float")
+        float = {
+            width = "80%",       -- Width: number of columns or percentage string
+            height = "80%",      -- Height: number of rows or percentage string
+            row = "center",      -- Row position: number, "center", or percentage string
+            col = "center",      -- Column position: number, "center", or percentage string
+            relative = "editor", -- Relative to: "editor" or "cursor"
+            border = "rounded",  -- Border style: "none", "single", "double", "rounded", "solid", "shadow"
+        },
     },
-    window_navigation = true, -- Enable window navigation keymaps (<C-h/j/k/l>)
-    scrolling = true,         -- Enable scrolling keymaps (<C-f/b>) for page up/down
-  }
+    -- File refresh settings
+    refresh = {
+        enable = true,             -- Enable file change detection
+        updatetime = 100,          -- updatetime when Claude Code is active (milliseconds)
+        timer_interval = 1000,     -- How often to check for file changes (milliseconds)
+        show_notifications = true, -- Show notification when files are reloaded
+    },
+    -- Git project settings
+    git = {
+        use_git_root = true, -- Set CWD to git root when opening Claude Code (if in git project)
+    },
+    -- Shell-specific settings
+    shell = {
+        separator = '&&',    -- Command separator used in shell commands
+        pushd_cmd = 'pushd', -- Command to push directory onto stack (e.g., 'pushd' for bash/zsh, 'enter' for nushell)
+        popd_cmd = 'popd',   -- Command to pop directory from stack (e.g., 'popd' for bash/zsh, 'exit' for nushell)
+    },
+    -- Command settings
+    command = "claude", -- Command used to launch Claude Code
+    -- Command variants
+    command_variants = {
+        -- Conversation management
+        continue = "--continue", -- Resume the most recent conversation
+        resume = "--resume",     -- Display an interactive conversation picker
+
+        -- Output options
+        verbose = "--verbose", -- Enable verbose logging with full turn-by-turn output
+    },
+    -- Keymaps
+    keymaps = {
+        toggle = {
+            normal = "<C-,>",            -- Normal mode keymap for toggling Claude Code, false to disable
+            terminal = "<C-,>",          -- Terminal mode keymap for toggling Claude Code, false to disable
+            variants = {
+                continue = "<leader>cC", -- Normal mode keymap for Claude Code with continue flag
+                verbose = "<leader>cV",  -- Normal mode keymap for Claude Code with verbose flag
+            },
+        },
+        window_navigation = true, -- Enable window navigation keymaps (<C-h/j/k/l>)
+        scrolling = true,         -- Enable scrolling keymaps (<C-f/b>) for page up/down
+    }
 })

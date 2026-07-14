@@ -215,7 +215,7 @@ Plug('tpope/vim-fugitive')
 Plug('AndrewRadev/splitjoin.vim')
 Plug('godlygeek/tabular')
 Plug('Yggdroot/indentLine')
-Plug('jiangmiao/auto-pairs')
+Plug('windwp/nvim-autopairs')
 Plug('majutsushi/tagbar')
 Plug('powerman/vim-plugin-ruscmd')
 Plug('vim-scripts/indentpython.vim')
@@ -267,8 +267,10 @@ vim.o.completeopt = 'menu,menuone,noselect'
 -- local nvim_lsp = require("lsp_config")
 local cmp = require('cmp')
 local cmp_nvim_lsp = require('cmp_nvim_lsp')
+local cmp_autopairs = require('nvim-autopairs.completion.cmp')
 local luasnip = require('luasnip')
 
+require("nvim-autopairs").setup({})
 require('overseer').setup({})
 require('lualine').setup {
     options = { theme = "bubblegum" }
@@ -387,6 +389,10 @@ cmp.setup.cmdline(':', {
     })
 })
 
+cmp.event:on(
+    'confirm_done',
+    cmp_autopairs.on_confirm_done()
+)
 
 vim.diagnostic.config({
     underline = true,

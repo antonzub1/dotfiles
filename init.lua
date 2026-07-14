@@ -293,10 +293,10 @@ cmp.setup {
 
             -- Set the fixed width of the completion menu to 60 characters.
             -- fixed_width = 60
-            width_percent = 0.2
+            local width_percent = 0.2
 
             -- Set 'fixed_width' to false if not provided.
-            fixed_width = fixed_width or false
+            local fixed_width = fixed_width or false
 
             -- Get the completion entry text shown in the completion window.
             local content = item.abbr

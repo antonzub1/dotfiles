@@ -169,6 +169,33 @@ vim.api.nvim_create_user_command('Buffers', function(opts)
     )
 end, { bang = true, nargs = '*' })
 
+local on_attach = function(client, bufnr)
+    local opts = { noremap = true }
+
+    vim.api.nvim_set_keymap('n', '<Leader>gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+    vim.api.nvim_set_keymap('n', '<Leader>gt', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+    vim.api.nvim_set_keymap('n', '<Leader>gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+    vim.api.nvim_set_keymap('n', '<Leader>gu', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+    vim.api.nvim_set_keymap('n', '<Leader>gr', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+    vim.api.nvim_set_keymap('n', '<Leader>gh', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+
+    print("LSP started.");
+end
+
+vim.g.rustaceanvim = {
+    server = {
+        on_attach = on_attach,
+        -- cmd = { vim.fn.expand("~/.cargo/bin/lspmux"), "client" },
+        cmd = { vim.fn.expand("rust-analyzer") },
+        check = {
+            command = "check",
+            extraArgs = {},
+        },
+        checkOnSave = true,
+    }
+}
+
+
 local Plug = vim.fn['plug#']
 vim.call('plug#begin', '~/.local/share/nvim/plugged')
 Plug('nvim-treesitter/nvim-treesitter', { ['do'] = ':TSUpdate' })
@@ -402,20 +429,6 @@ vim.api.nvim_create_autocmd({ "CursorHold" }, {
     end
 })
 
-local on_attach = function(client, bufnr)
-    local opts = { noremap = true }
-
-    vim.api.nvim_set_keymap('n', '<Leader>gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-    vim.api.nvim_set_keymap('n', '<Leader>gt', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-    vim.api.nvim_set_keymap('n', '<Leader>gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-    vim.api.nvim_set_keymap('n', '<Leader>gu', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-    vim.api.nvim_set_keymap('n', '<Leader>gr', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-    vim.api.nvim_set_keymap('n', '<Leader>gh', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-
-    print("LSP started.");
-end
-
-
 local servers = {
     { "ccls",  {} },
     { "gopls", {} },
@@ -456,14 +469,6 @@ for _, server in pairs(servers) do
     vim.lsp.config(name, vim.tbl_deep_extend("force", default_config, overrides))
     vim.lsp.enable(name)
 end
-
-vim.g.rustaceanvim = {
-    server = {
-        on_attach = on_attach,
-        -- cmd = { vim.fn.expand("~/.cargo/bin/lspmux"), "client" },
-        cmd = { vim.fn.expand("rust-analyzer") },
-    }
-}
 
 -- DAP Configuration
 local dap = require("dap")

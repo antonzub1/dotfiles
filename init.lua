@@ -179,71 +179,85 @@ vim.g.rustaceanvim = {
 }
 
 
-local Plug = vim.fn['plug#']
-vim.call('plug#begin', '~/.local/share/nvim/plugged')
-Plug('nvim-treesitter/nvim-treesitter', { ['do'] = ':TSUpdate' })
-Plug('nvim-treesitter/nvim-treesitter-context')
+-- Run post-install/update build steps that vim-plug used to do via `do = ...`
+vim.api.nvim_create_autocmd('PackChanged', {
+    callback = function(args)
+        local data = args.data
+        if data.kind ~= 'install' and data.kind ~= 'update' then
+            return
+        end
+        local name = data.spec.name or data.spec.src:match('([^/]+)$')
+        if name == 'fzf' then
+            vim.system({ './install', '--bin' }, { cwd = data.path }):wait()
+        elseif name == 'sniprun' then
+            vim.system({ 'sh', 'install.sh' }, { cwd = data.path }):wait()
+        end
+    end,
+})
 
-Plug('nvim-lua/plenary.nvim')
-Plug('nvim-telescope/telescope.nvim')
+vim.pack.add({
+    { src = 'https://github.com/nvim-treesitter/nvim-treesitter' },
+    { src = 'https://github.com/nvim-treesitter/nvim-treesitter-context' },
 
-Plug('antonzub1/lualine.nvim')
-Plug('Xuyuanp/nerdtree-git-plugin')
-Plug('easymotion/vim-easymotion')
-Plug('tpope/vim-repeat')
-Plug('tpope/vim-speeddating')
-Plug('tpope/vim-surround')
-Plug('tpope/vim-commentary')
-Plug('tpope/vim-fugitive')
-Plug('AndrewRadev/splitjoin.vim')
-Plug('godlygeek/tabular')
-Plug('Yggdroot/indentLine')
-Plug('windwp/nvim-autopairs')
-Plug('majutsushi/tagbar')
-Plug('powerman/vim-plugin-ruscmd')
-Plug('vim-scripts/indentpython.vim')
-Plug('pgdouyon/vim-evanesco')
-Plug('vim-test/vim-test')
-Plug('t9md/vim-choosewin')
+    { src = 'https://github.com/nvim-lua/plenary.nvim' },
+    { src = 'https://github.com/nvim-telescope/telescope.nvim' },
 
-Plug('christoomey/vim-tmux-navigator')
-Plug('michaelb/sniprun', { ['do'] = 'sh install.sh' })
+    { src = 'https://github.com/antonzub1/lualine.nvim' },
+    { src = 'https://github.com/Xuyuanp/nerdtree-git-plugin' },
+    { src = 'https://github.com/easymotion/vim-easymotion' },
+    { src = 'https://github.com/tpope/vim-repeat' },
+    { src = 'https://github.com/tpope/vim-speeddating' },
+    { src = 'https://github.com/tpope/vim-surround' },
+    { src = 'https://github.com/tpope/vim-commentary' },
+    { src = 'https://github.com/tpope/vim-fugitive' },
+    { src = 'https://github.com/AndrewRadev/splitjoin.vim' },
+    { src = 'https://github.com/godlygeek/tabular' },
+    { src = 'https://github.com/Yggdroot/indentLine' },
+    { src = 'https://github.com/windwp/nvim-autopairs' },
+    { src = 'https://github.com/majutsushi/tagbar' },
+    { src = 'https://github.com/powerman/vim-plugin-ruscmd' },
+    { src = 'https://github.com/vim-scripts/indentpython.vim' },
+    { src = 'https://github.com/pgdouyon/vim-evanesco' },
+    { src = 'https://github.com/vim-test/vim-test' },
+    { src = 'https://github.com/t9md/vim-choosewin' },
 
--- Appearance, tools
-Plug('junegunn/goyo.vim')
-Plug('junegunn/seoul256.vim')
-Plug('junegunn/fzf', { ['do'] = './install --bin' })
-Plug('junegunn/fzf.vim')
-Plug('hedyhli/outline.nvim')
-Plug('preservim/nerdtree')
+    { src = 'https://github.com/christoomey/vim-tmux-navigator' },
+    { src = 'https://github.com/michaelb/sniprun' },
 
--- LSP plugins
-Plug('neovim/nvim-lspconfig')
-Plug('hrsh7th/cmp-nvim-lsp')
-Plug('hrsh7th/cmp-buffer')
-Plug('hrsh7th/cmp-path')
-Plug('hrsh7th/cmp-cmdline')
-Plug('hrsh7th/nvim-cmp')
+    -- Appearance, tools
+    { src = 'https://github.com/junegunn/goyo.vim' },
+    { src = 'https://github.com/junegunn/seoul256.vim' },
+    { src = 'https://github.com/junegunn/fzf' },
+    { src = 'https://github.com/junegunn/fzf.vim' },
+    { src = 'https://github.com/hedyhli/outline.nvim' },
+    { src = 'https://github.com/preservim/nerdtree' },
 
-Plug('stevearc/overseer.nvim')
-Plug('mrcjkb/rustaceanvim')
+    -- LSP plugins
+    { src = 'https://github.com/neovim/nvim-lspconfig' },
+    { src = 'https://github.com/hrsh7th/cmp-nvim-lsp' },
+    { src = 'https://github.com/hrsh7th/cmp-buffer' },
+    { src = 'https://github.com/hrsh7th/cmp-path' },
+    { src = 'https://github.com/hrsh7th/cmp-cmdline' },
+    { src = 'https://github.com/hrsh7th/nvim-cmp' },
 
--- Debugging
-Plug('mfussenegger/nvim-dap')
-Plug('mfussenegger/nvim-dap-python')
-Plug('nvim-neotest/nvim-nio')
-Plug('rcarriga/nvim-dap-ui')
+    { src = 'https://github.com/stevearc/overseer.nvim' },
+    { src = 'https://github.com/mrcjkb/rustaceanvim' },
 
--- For vsnip users.
-Plug('hrsh7th/cmp-vsnip')
-Plug('hrsh7th/vim-vsnip')
-Plug('L3MON4D3/LuaSnip')
-Plug('saadparwaiz1/cmp_luasnip')
+    -- Debugging
+    { src = 'https://github.com/mfussenegger/nvim-dap' },
+    { src = 'https://github.com/mfussenegger/nvim-dap-python' },
+    { src = 'https://github.com/nvim-neotest/nvim-nio' },
+    { src = 'https://github.com/rcarriga/nvim-dap-ui' },
 
--- AI
-Plug('greggh/claude-code.nvim')
+    -- For vsnip users.
+    { src = 'https://github.com/hrsh7th/cmp-vsnip' },
+    { src = 'https://github.com/hrsh7th/vim-vsnip' },
+    { src = 'https://github.com/L3MON4D3/LuaSnip' },
+    { src = 'https://github.com/saadparwaiz1/cmp_luasnip' },
 
-vim.call('plug#end')
+    -- AI
+    { src = 'https://github.com/greggh/claude-code.nvim' },
+})
 
 vim.o.completeopt = 'menu,menuone,noselect'
 

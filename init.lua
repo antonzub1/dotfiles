@@ -60,23 +60,6 @@ vim.g.seoul256_sgrb = 0
 vim.g.seoul256_background = 237
 
 
--- Testing configuration
-vim.g.test_strategy = 'neovim'
-vim.g.test_neovim_start_normal = 1
-vim.g.test_python_runner = 'pytest'
-vim.g.test_python_pytest_options = '-s'
-vim.g.test_project_root = vim.fn.getcwd()
-
-vim.opt.guicursor = ''
-
--- Configuration for Python files
-vim.cmd([[
-  augroup PythonSettings
-    autocmd!
-    autocmd BufNewFile,BufRead *.py set tabstop=4 softtabstop=4 shiftwidth=4 textwidth=120 expandtab autoindent fileformat=unix
-  augroup END
-]])
-
 -- Disable arrow keys in normal, insert, and visual modes
 vim.api.nvim_set_keymap('n', '<Up>', '<NOP>', { noremap = true })
 vim.api.nvim_set_keymap('n', '<Down>', '<NOP>', { noremap = true })

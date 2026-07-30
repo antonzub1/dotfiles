@@ -152,6 +152,27 @@ vim.api.nvim_create_user_command('Buffers', function(opts)
     )
 end, { bang = true, nargs = '*' })
 
+vim.lsp.config('*', {
+  before_init = function(_, config)
+    local codesettings = require('codesettings')
+    codesettings.with_local_settings(config.name, config)
+  end,
+})
+
+-- rust-analyzer needs some settings (e.g. rust-analyzer.workspace.discoverConfig)
+-- copied into initializationOptions, which rustaceanvim computes before the
+-- generic '*' before_init hook above runs, so local codesettings overrides
+-- would otherwise be missed for those init-time-only settings.
+vim.lsp.config('rust-analyzer', {
+  before_init = function(init_params, config)
+    local codesettings = require('codesettings')
+    codesettings.with_local_settings(config.name, config)
+    if config.default_settings and config.default_settings[config.name] then
+      init_params.initializationOptions = config.default_settings[config.name]
+    end
+  end,
+})
+
 local on_attach = function(client, bufnr)
     local opts = { noremap = true }
 
@@ -242,6 +263,7 @@ vim.pack.add({
 
     { src = 'https://github.com/stevearc/overseer.nvim' },
     { src = 'https://github.com/mrcjkb/rustaceanvim' },
+    { src = 'https://github.com/mrjones2014/codesettings.nvim' },
 
     -- Debugging
     { src = 'https://github.com/mfussenegger/nvim-dap' },

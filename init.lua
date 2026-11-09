@@ -59,6 +59,11 @@ vim.g.seoul256_sgrb = 0
 -- Set the background color for seoul256 color scheme
 vim.g.seoul256_background = 237
 
+-- Better, higher-contrast colors for diff and merge modes
+vim.api.nvim_set_hl(0, 'DiffAdd', { bg = '#2e443b', fg = '#dcdccc' })     -- Soft green for additions
+vim.api.nvim_set_hl(0, 'DiffChange', { bg = '#3b434f', fg = '#dcdccc' })  -- Soft blue/gray for changes
+vim.api.nvim_set_hl(0, 'DiffDelete', { bg = '#4a2f30', fg = '#dcdccc' })  -- Soft red for deletions
+vim.api.nvim_set_hl(0, 'DiffText', { bg = '#5c6c80', fg = '#ffffff', bold = true }) -- Exact changed text
 
 -- Disable arrow keys in normal, insert, and visual modes
 vim.api.nvim_set_keymap('n', '<Up>', '<NOP>', { noremap = true })
@@ -230,7 +235,7 @@ vim.pack.add({
     { src = 'https://github.com/tpope/vim-speeddating' },
     { src = 'https://github.com/tpope/vim-surround' },
     { src = 'https://github.com/tpope/vim-commentary' },
-    { src = 'https://github.com/tpope/vim-fugitive' },
+    { src = 'https://github.com/neogitorg/neogit' },
     { src = 'https://github.com/AndrewRadev/splitjoin.vim' },
     { src = 'https://github.com/godlygeek/tabular' },
     { src = 'https://github.com/Yggdroot/indentLine' },
